@@ -13,6 +13,14 @@ export async function handle({ event, resolve }) {
 	}
 
 	let isAuthorized = true;
+	isAuthorized = await runGuards(event, [
+		{
+			pathStart: '/dashboard',
+			callbacks: [
+				() => user ? true : false
+			]
+		}
+	]);
 
 	if (!isAuthorized) {
 		if (!user)

@@ -26,7 +26,7 @@ export async function getCurrentUser(cookies) {
 			.where(eq(users.uuid, token_data.payload.uuid))
 			.limit(1);
 
-		if(!rows.at(0))
+		if (!rows.at(0))
 			throw new Error("Token expired.");
 	}
 	return rows.at(0) ?? null;

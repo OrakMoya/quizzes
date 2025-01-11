@@ -15,4 +15,5 @@
 	{/if}
 
 	<button type="submit">Šalji ga</button>
+	<a href="/register">Sign up instead</a>
 </form>

@@ -22,4 +22,5 @@
 	<input type="password" id="password" class="text-black" name="password" />
 
 	<button type="submit">Šalji ga</button>
+	<a href="/login">Log in instead</a>
 </form>

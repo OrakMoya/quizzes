@@ -14,7 +14,7 @@ export async function runGuards(request, guards) {
 	authorized = !guards.find((guard) => {
 		let authorizedInThisGuard = true;
 		guard.callbacks.find((callback) => authorizedInThisGuard = authorizedInThisGuard && callback())
-		return authorizedInThisGuard;
+		return !authorizedInThisGuard;
 	})
 
 	return authorized;

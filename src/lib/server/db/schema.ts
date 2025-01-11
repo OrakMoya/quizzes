@@ -1,9 +1,10 @@
+import { json } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 
 const timestamps = {
-	created_at: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
-	updated_at: integer('updated_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
+	created_at: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
+	updated_at: integer('updated_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
 };
 
 const uuids = {
@@ -15,7 +16,7 @@ export const users = sqliteTable('users', {
 	username: text('username', { mode: 'text' }).notNull(),
 	email: text('email', { mode: 'text' }).notNull(),
 	password: text('password', { mode: 'text' }).notNull(),
-	role: text('role', { enum: ['admin', 'user'] }).notNull(),
+	role: text('role', { enum: ['admin', 'user', 'guest'] }).notNull(),
 	...timestamps
 });
 
@@ -25,7 +26,7 @@ export const groups = sqliteTable('groups', {
 	...timestamps
 });
 
-export const quiz_collaborators = sqliteTable('quiz_collaborators', {
+export const quizz_collaborators = sqliteTable('quiz_collaborators', {
 	...uuids,
 	collaborator_uuid: text('collaborator_id', { mode: 'text' })
 		.references(() => users.uuid, { onDelete: 'cascade' })
@@ -36,16 +37,19 @@ export const quiz_collaborators = sqliteTable('quiz_collaborators', {
 
 export const quizzes = sqliteTable('quizzes', {
 	...uuids,
+	title: text('title', { mode: 'text' }).notNull(),
 	owner_uuid: text('user_uuid', { mode: 'text' })
 		.references(() => users.uuid, { onDelete: 'cascade' })
 		.notNull(),
 	group_uuid: text('group_uuid', { mode: 'text' })
 		.references(() => groups.uuid, { onDelete: 'set null' }),
+	version: integer('version').default(1),
 	...timestamps
-})
+});
 
 export const questions = sqliteTable('questions', {
 	...uuids,
+	position: integer('position').notNull(),
 	quizz_uuid: text('quizz_uuid', { mode: 'text' })
 		.references(() => quizzes.uuid, { onDelete: 'cascade' })
 		.notNull(),
@@ -53,6 +57,18 @@ export const questions = sqliteTable('questions', {
 		.notNull(),
 	...timestamps
 });
+
+export const answers = sqliteTable('answers', {
+	...uuids,
+	question_uuid: text('question_uuid', { mode: 'text' })
+		.references(() => questions.uuid)
+		.notNull(),
+	user_uuid: text('user_uuid', { mode: 'text' })
+		.references(() => users.uuid)
+		.notNull(),
+	data: text('data', { mode: 'json' }).notNull(),
+	...timestamps
+})
 
 export const question_parts = sqliteTable('question_parts', {
 	...uuids,
@@ -64,11 +80,13 @@ export const question_parts = sqliteTable('question_parts', {
 			'number',
 			'radio'
 		]
-	}),
-	data: text('data', { mode: 'json' }),
-	carries: real('carries'),
-	wrong_carries: real('wrong_carries'),
+	}).notNull(),
+	data: text('data', { mode: 'json' }).$type<any>().notNull(),
+	text: text('text', { mode: 'text' }).default(''),
+	carries: real('carries').default(1),
+	wrong_carries: real('wrong_carries').default(0.25),
 	question_uuid: text('question_uuid')
 		.references(() => questions.uuid, { onDelete: 'cascade' })
-		.notNull()
+		.notNull(),
+	...timestamps
 })

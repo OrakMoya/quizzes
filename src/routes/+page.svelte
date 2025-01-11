@@ -1,4 +1,9 @@
 <script>
+	import { enhance } from '$app/forms';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { ArrowRightIcon } from 'lucide-svelte';
+
 	/** @typedef {Object} Props
 	 * @prop {{logged_in: boolean}} data
 	 */
@@ -13,6 +18,10 @@
 	<div class="flex h-full w-full flex-col items-center justify-center">
 		gas
 		{#if data.logged_in}
+			<form class="flex" action="?/take" method="post" use:enhance>
+				<Input name="quizz_uuid"></Input>
+				<Button type="submit"><ArrowRightIcon /></Button>
+			</form>
 			<a href="/dashboard">Dashboard</a>
 		{:else}
 			<a href="/login">Log in</a>
