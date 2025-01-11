@@ -67,7 +67,8 @@ export const actions = {
 					carries: part.carries,
 					wrong_carries: part.wrong_carries,
 					question_uuid: current_question.uuid,
-					data: part.data
+					question_data: part.question_data,
+					correct_data: part.correct_data
 				});
 		});
 

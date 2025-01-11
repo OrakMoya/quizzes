@@ -1,0 +1,24 @@
+{
+	"part": {
+		"uuid": "f886c13d-9a89-4fe6-bebd-5943b7323600",
+		"type": "checkbox",
+		"question_data": [
+			"Example 222222",
+			""
+		],
+		"correct_data": [
+			true,
+			false
+		],
+		"text": "",
+		"carries": 1,
+		"wrong_carries": 0.25,
+		"question_uuid": "817b611e-6899-4988-9e9b-eb03db9f5ff8",
+		"created_at": "2025-01-11T15:49:47.000Z",
+		"updated_at": "2025-01-11T15:49:47.000Z"
+	},
+	"answers": [
+		true,
+		false
+	]
+}

@@ -4,18 +4,22 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	let { part = $bindable() } = $props();
-	if (!part.data || !part.data.length) part.data = [{ text: 'Example', correct_state: false }];
+	if (!part.question_data || !part.question_data.length) {
+		part.question_data = ['Example' ];
+		part.correct_data = [true];
+	}
 
 	function addOption() {
-		part.data.push({ text: '', correct_state: false });
+		part.question_data.push('');
+		part.correct_data.push(false);
 	}
 </script>
 
-{#each part.data as value, i}
+{#each part.question_data as value, i}
 	<div class="flex w-fit items-center">
-		<Checkbox bind:checked={part.data[i].correct_state} id="checkbox-{i}" /><Input
+		<Checkbox bind:checked={part.correct_data[i]} id="checkbox-{i}" /><Input
 			type="text"
-			bind:value={part.data[i].text}
+			bind:value={part.question_data[i]}
 		/>
 	</div>
 {/each}

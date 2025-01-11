@@ -18,7 +18,8 @@
 			question_uuid: question.uuid,
 			type: 'checkbox',
 			text: '',
-			data: [],
+			question_data: [],
+			correct_data: [],
 			carries: 1,
 			wrong_carries: 0.25
 		});

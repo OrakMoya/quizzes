@@ -1,5 +1,5 @@
 import { db } from "$lib/server/db";
-import { quizzes } from "$lib/server/db/schema";
+import { quizzes, sessions } from "$lib/server/db/schema";
 import { fail, redirect } from "@sveltejs/kit";
 import { like } from "drizzle-orm";
 
@@ -22,8 +22,6 @@ export let actions = {
 		if (!quizz) {
 			return fail(400, { quizz_uuid: quizz_uuid, missing: true });
 		}
-
-		console.log(quizz);
 
 		return redirect(302, '/quizz/' + quizz_uuid);
 

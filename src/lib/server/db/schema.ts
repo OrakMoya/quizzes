@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
+import { boolean } from 'drizzle-orm/mysql-core';
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 
 const timestamps = {
@@ -45,7 +46,7 @@ export const quizzes = sqliteTable('quizzes', {
 		.references(() => groups.uuid, { onDelete: 'set null' }),
 	version: integer('version').default(1),
 	...timestamps
-});
+})
 
 export const questions = sqliteTable('questions', {
 	...uuids,
@@ -58,6 +59,18 @@ export const questions = sqliteTable('questions', {
 	...timestamps
 });
 
+export const sessions = sqliteTable('sessions', {
+	...uuids,
+	user_uuid: text('user_uuid', { mode: 'text' })
+		.references(() => users.uuid)
+		.notNull(),
+	quizz_uuid: text('quizz_uuid', { mode: 'text' })
+		.references(() => quizzes.uuid)
+		.notNull(),
+	in_progress: integer('in_progress').default(0),
+	...timestamps
+})
+
 export const answers = sqliteTable('answers', {
 	...uuids,
 	question_uuid: text('question_uuid', { mode: 'text' })
@@ -67,6 +80,9 @@ export const answers = sqliteTable('answers', {
 		.references(() => users.uuid)
 		.notNull(),
 	data: text('data', { mode: 'json' }).notNull(),
+	session_uuid: text('session_uuid', {mode:'text'})
+		.references(()=>sessions.uuid)
+		.notNull(),
 	...timestamps
 })
 
@@ -81,7 +97,8 @@ export const question_parts = sqliteTable('question_parts', {
 			'radio'
 		]
 	}).notNull(),
-	data: text('data', { mode: 'json' }).$type<any>().notNull(),
+	question_data: text('question_data', { mode: 'json' }).notNull(),
+	correct_data: text('correct_data', { mode: 'json' }).notNull(),
 	text: text('text', { mode: 'text' }).default(''),
 	carries: real('carries').default(1),
 	wrong_carries: real('wrong_carries').default(0.25),
