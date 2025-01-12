@@ -74,14 +74,21 @@ export const sessions = sqliteTable('sessions', {
 export const answers = sqliteTable('answers', {
 	...uuids,
 	question_uuid: text('question_uuid', { mode: 'text' })
-		.references(() => questions.uuid)
+		.notNull(),
+	question_part_uuid: text('question_part_uuid', { mode: 'text' })
 		.notNull(),
 	user_uuid: text('user_uuid', { mode: 'text' })
 		.references(() => users.uuid)
 		.notNull(),
-	data: text('data', { mode: 'json' }).notNull(),
-	session_uuid: text('session_uuid', {mode:'text'})
-		.references(()=>sessions.uuid)
+	question_copy: text('question_copy', { mode: 'json' })
+		.$type<typeof questions.$inferInsert>()
+		.notNull(),
+	question_part_copy: text('question_part_copy', {mode:'json'})
+		.$type<typeof question_parts.$inferInsert>()
+		.notNull(),
+	answers: text('answers', { mode: 'json' }).$type<any>(),
+	session_uuid: text('session_uuid', { mode: 'text' })
+		.references(() => sessions.uuid)
 		.notNull(),
 	...timestamps
 })
@@ -97,11 +104,11 @@ export const question_parts = sqliteTable('question_parts', {
 			'radio'
 		]
 	}).notNull(),
-	question_data: text('question_data', { mode: 'json' }).notNull(),
-	correct_data: text('correct_data', { mode: 'json' }).notNull(),
-	text: text('text', { mode: 'text' }).default(''),
-	carries: real('carries').default(1),
-	wrong_carries: real('wrong_carries').default(0.25),
+	question_data: text('question_data', { mode: 'json' }).$type<any[]>().notNull(),
+	correct_data: text('correct_data', { mode: 'json' }).$type<any[]>().notNull(),
+	text: text('text', { mode: 'text' }).default('').notNull(),
+	carries: real('carries').default(1).notNull(),
+	wrong_carries: real('wrong_carries').default(0.25).notNull(),
 	question_uuid: text('question_uuid')
 		.references(() => questions.uuid, { onDelete: 'cascade' })
 		.notNull(),

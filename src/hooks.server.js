@@ -19,7 +19,13 @@ export async function handle({ event, resolve }) {
 			callbacks: [
 				() => user ? true : false
 			]
-		}
+		},
+		{
+			pathStart: '/quizz/',
+			callbacks: [
+				() => user ? true : false
+			]
+		},
 	]);
 
 	if (!isAuthorized) {

@@ -16,3 +16,7 @@ quizz!!
 <form method="post" use:enhance action="?/new">
 	<button type="submit">Take</button>
 </form>
+
+{#each data.past_results as past_result}
+	<div>{past_result.achieved}/{past_result.total}</div>
+{/each}
