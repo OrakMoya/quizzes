@@ -23,6 +23,6 @@ export async function load({ cookies, params }) {
 		.from(questions)
 		.where(eq(questions.quizz_uuid, params.quizz_uuid));
 
-	return { questions: questions_rows };
+	return { questions: questions_rows, quizz };
 }
 

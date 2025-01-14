@@ -6,15 +6,13 @@
 
 	let { data } = $props(); // Data returned by +page.server.js
 	let question = $state(data.question);
-	console.log(data);
-
 
 	let questionParts = $state(data.current_question_parts ?? []);
 	let questionPartsStringified = $state('');
 
 	function addPart() {
 		questionParts.push({
-			uuid: "",
+			uuid: '',
 			question_uuid: question.uuid,
 			type: 'checkbox',
 			text: '',
@@ -28,7 +26,7 @@
 	$effect(() => {
 		question = data.question;
 	});
-	$effect(()=>{
+	$effect(() => {
 		questionParts = data.current_question_parts;
 	});
 	$effect(() => {
@@ -46,5 +44,8 @@
 <Button onclick={addPart}>Add Question Part</Button>
 
 {#each questionParts as _, i}
-	<QuestionPartForm bind:part={questionParts[i]} />
+	<QuestionPartForm
+		bind:part={questionParts[i]}
+		onDelete={() => (questionParts = questionParts.toSpliced(i, 1))}
+	/>
 {/each}

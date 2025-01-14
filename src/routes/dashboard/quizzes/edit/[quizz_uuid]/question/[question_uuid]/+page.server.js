@@ -1,6 +1,7 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
 import { question_parts, questions } from "$lib/server/db/schema";
+import { getPartsOfQuestion, getQuestion } from "$lib/server/utils";
 import { error, fail, json } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 
@@ -11,41 +12,32 @@ export async function load({ cookies, params }) {
 	if (!user) {
 		return error(403);
 	}
-	let question = (await db.select()
-		.from(questions)
-		.where(eq(questions.uuid, params.question_uuid))
-		.limit(1)).at(0);
+	let question = await getQuestion(params.question_uuid);
 	if (!question) {
 		return error(404);
 	}
-	let question_part_rows = await db.select()
-		.from(question_parts)
-		.where(eq(question_parts.question_uuid, question.uuid));
+
+	let question_part_rows = await getPartsOfQuestion(question.uuid);
 
 	return { question, current_question_parts: question_part_rows }
 }
 
 /** @type {import("./$types").Actions} */
 export const actions = {
-	createQuestionPart: async () => {
-		return {};
-	},
 	save: async ({ cookies, params, request }) => {
 		let user = await getCurrentUser(cookies);
 		if (!user) {
 			return error(403);
 		}
-		let current_question = (await db.select()
-			.from(questions)
-			.where(eq(questions.uuid, params.question_uuid))
-			.limit(1)).at(0);
+		let current_question = await getQuestion(params.question_uuid);
 		if (!current_question) {
 			return error(404);
 		}
 
 		let data = await request.formData();
 		let questionText = data.get('question');
-		/** @type {{text: string; type: typeof question_parts.$inferInsert.type; data: any[], carries: Number, wrong_carries: Number}[]} */
+
+		/** @type {{text: string; type: typeof question_parts.$inferInsert.type; correct_data: any[]; question_data: any[], carries: Number, wrong_carries: Number}[]} */
 		let questionParts = JSON.parse(data.get('question_parts')?.toString() ?? "[]");
 		if (!questionText) {
 			return fail(400, { questionText, missing: true });

@@ -5,7 +5,6 @@
 
 	let { part = $bindable() } = $props();
 	part.answer_data = Array(part.question_data.length).fill(false);
-	console.log($state.snapshot(part));
 </script>
 
 {#each part.question_data as value, i}

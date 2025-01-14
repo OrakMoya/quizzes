@@ -11,7 +11,6 @@
 	/** @type {Props} */
 	let { data } = $props();
 
-	console.log(data);
 </script>
 
 <main class="min-w-screen h-screen min-h-screen w-screen overflow-clip bg-neutral-900 text-white">

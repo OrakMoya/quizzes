@@ -2,9 +2,9 @@ import { deserialize } from "$app/forms";
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
 import { answers, question_parts, questions, questions, questions, quizzes, sessions, users } from "$lib/server/db/schema";
-import { get_results } from "$lib/server/utils";
+import { getResults } from "$lib/server/utils";
 import { fail, redirect } from "@sveltejs/kit";
-import { and, asc, desc, eq, gt, gte, inArray, like } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull, like } from "drizzle-orm";
 import { get } from "svelte/store";
 
 /** @type {import("./$types").PageServerLoad} */
@@ -43,13 +43,18 @@ export async function load({ cookies, params }) {
 			.limit(1)
 	).at(0) ?? null;
 
-	console.log(session);
 
 	let past_sessions = await db.select()
 		.from(sessions)
-		.where(and(eq(sessions.user_uuid, user.uuid), eq(sessions.quizz_uuid, quizz.uuid)));
+		.where(
+			and(
+				eq(sessions.user_uuid, user.uuid),
+				eq(sessions.quizz_uuid, quizz.uuid),
+				eq(sessions.in_progress, 0)
+			)
+		).orderBy(desc(sessions.updated_at));
 
-	let past_results = await Promise.all(past_sessions.map(async session => await get_results(session.uuid)));
+	let past_results = await Promise.all(past_sessions.map(async session => await getResults(session.uuid)));
 
 	return { session, past_results };
 }
@@ -164,43 +169,22 @@ export let actions = {
 			return fail(404);
 		}
 
-		let last_answer = (await db.select()
+		let next_unanswered_question = (await db.select()
 			.from(answers)
-			.where(eq(answers.session_uuid, session.uuid))
-			.orderBy(desc(answers.created_at))).at(0);
-
-		let next_question;
-		if (last_answer) {
-			let last_question = (await db.select()
-				.from(questions)
-				.where(eq(questions.uuid, last_answer.question_uuid))
-				.limit(1)).at(0);
-
-			if (!last_question) {
-				throw Error("Something went wrong");
-			}
-
-			next_question = (await db.select()
-				.from(questions)
-				.where(and(eq(questions.quizz_uuid, session.quizz_uuid), gt(questions.position, last_question.position)))
-				.limit(1)).at(0);
-
-			console.log(next_question);
-
-			if (!next_question) {
-				throw Error("Something went wrong");
-			}
-
+			.where(
+				and(
+					eq(answers.session_uuid, session.uuid),
+					isNull(answers.answers)
+				)
+			)
+			.orderBy(desc(answers.updated_at))).at(0);
+		if (!next_unanswered_question) {
+			throw Error("Something went wong. :(");
 		}
-		else {
-			next_question = (await db.select()
-				.from(questions)
-				.where(eq(questions.quizz_uuid, quizz.uuid))
-				.orderBy(asc(questions.position)))[0];
-		}
+
 
 		cookies.set('quizz_session', session.uuid, { path: '/' });
-		return redirect(302, '/quizz/' + params.quizz_uuid + '/question/' + next_question.uuid);
+		return redirect(302, '/quizz/' + params.quizz_uuid + '/question/' + next_unanswered_question.question_uuid);
 	}
 
 

@@ -14,10 +14,18 @@
 >
 	<Button type="submit"><PlusIcon /></Button>
 </form>
+<Button onclick={() => navigator.clipboard.writeText(data.quizz.uuid.substr(0, 5))}
+	>Copy code</Button
+>
 
-<div class="flex overflow-x-scroll p-4 gap-x-4">
+<div class="flex gap-x-4 overflow-x-scroll p-4">
+	<a class="w-fit whitespace-nowrap" href="/dashboard/quizzes/edit/{page.params.quizz_uuid}">Results</a>
 	{#each data.questions as question}
-		<a class="w-fit whitespace-nowrap" href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/question/{question.uuid}">#{question.position} : {question.question}</a>
+		<a
+			class="w-fit whitespace-nowrap"
+			href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/question/{question.uuid}"
+			>#{question.position} : {question.question}</a
+		>
 	{/each}
 </div>
 

@@ -25,9 +25,17 @@ export async function getCurrentUser(cookies) {
 		rows = await db.select().from(users)
 			.where(eq(users.uuid, token_data.payload.uuid))
 			.limit(1);
+		let row = rows.at(0)
 
-		if (!rows.at(0))
+		if (!row)
 			throw new Error("Token expired.");
+
+		// Refresh
+		let ts = Date.now() / 1000;
+		if ((ts - token_data.iat) < 600) {
+			let token = jwt.sign({ uuid: row.uuid }, APP_SECRET, { expiresIn: '60m' });
+			cookies.set('token', token, { path: '/' });
+		}
 	}
 	return rows.at(0) ?? null;
 }

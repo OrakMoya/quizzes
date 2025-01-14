@@ -1,10 +1,8 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
-import { answers,  question_parts, questions, quizzes, sessions } from "$lib/server/db/schema";
-import { get_results } from "$lib/server/utils";
+import { answers, question_parts, questions, quizzes, sessions } from "$lib/server/db/schema";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { and, asc, desc, eq, isNull, like, notInArray, sql } from "drizzle-orm";
-import { on } from "svelte/events";
 
 
 
@@ -21,7 +19,6 @@ export async function load({ request, params, cookies }) {
 		.limit(1)).at(0);
 
 	if (!quizz) {
-		console.log("quizz not found");
 		return error(404);
 	}
 
@@ -36,8 +33,7 @@ export async function load({ request, params, cookies }) {
 		.all();
 
 	if (!answers_rows.length) {
-		console.log("no answers");
-		return error(404);
+		return redirect(302, '/');
 	}
 
 	let question = answers_rows[0].question_copy;
@@ -94,7 +90,12 @@ export let actions = {
 			let part = submitted_parts[i];
 			await db.update(answers)
 				.set({ answers: part.answer_data, updated_at: sql`(unixepoch())` })
-				.where(eq(answers.question_part_uuid, part.uuid));
+				.where(
+					and(
+						eq(answers.question_part_uuid, part.uuid),
+						eq(answers.session_uuid, session.uuid)
+					)
+				);
 		}
 
 		let unaswered_questions = await db.select()
@@ -119,6 +120,6 @@ export let actions = {
 			.set({ in_progress: 0, updated_at: sql`(unixepoch())` })
 			.where(eq(sessions.uuid, session.uuid))
 
-		return redirect(302, '/');
+		return redirect(302, '/quizz/' + params.quizz_uuid);
 	}
 }

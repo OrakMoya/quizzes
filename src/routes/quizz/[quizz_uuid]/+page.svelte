@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 
 	let { data } = $props();
-	console.log(data);
 </script>
 
 quizz!!
