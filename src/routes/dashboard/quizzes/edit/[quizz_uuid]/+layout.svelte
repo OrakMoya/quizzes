@@ -18,14 +18,29 @@
 	>Copy code</Button
 >
 
-<div class="flex gap-x-4 overflow-x-scroll p-4">
-	<a class="w-fit whitespace-nowrap" href="/dashboard/quizzes/edit/{page.params.quizz_uuid}">Results</a>
+<div class="flex items-center gap-x-4 overflow-x-scroll p-4">
+	<a class="w-fit whitespace-nowrap" href="/dashboard/quizzes/edit/{page.params.quizz_uuid}"
+		>Results</a
+	>
 	{#each data.questions as question}
-		<a
-			class="w-fit whitespace-nowrap"
-			href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/question/{question.uuid}"
-			>#{question.position} : {question.question}</a
-		>
+		<div class="flex items-center">
+			<a
+				class="w-fit whitespace-nowrap"
+				href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/question/{question.uuid}"
+				>#{question.position} : {question.question}</a
+			>
+			<form
+				action={'/dashboard/quizzes/edit/' +
+					page.params.quizz_uuid +
+					'/question/' +
+					question.uuid +
+					'?/deleteQuestion'}
+				method="post"
+				use:enhance
+			>
+				<Button type="submit" variant="destructive">D</Button>
+			</form>
+		</div>
 	{/each}
 </div>
 

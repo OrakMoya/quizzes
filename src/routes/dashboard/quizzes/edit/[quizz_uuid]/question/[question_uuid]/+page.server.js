@@ -1,9 +1,9 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
-import { question_parts, questions } from "$lib/server/db/schema";
-import { getPartsOfQuestion, getQuestion } from "$lib/server/utils";
-import { error, fail, json } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
+import { question_parts, questions, questions, questions } from "$lib/server/db/schema";
+import { getPartsOfQuestion, getQuestion, getQuizzByShortUUID } from "$lib/server/utils";
+import { error, fail, json, redirect } from "@sveltejs/kit";
+import { asc, eq } from "drizzle-orm";
 
 
 /** @type {import("./$types").PageServerLoad} */
@@ -65,5 +65,36 @@ export const actions = {
 		});
 
 		return { success: true };
+	},
+	deleteQuestion: async ({ cookies, params }) => {
+		let user = await getCurrentUser(cookies);
+		if (!user) {
+			return fail(403);
+		}
+
+		let quizz = await getQuizzByShortUUID(params.quizz_uuid);
+		if (!quizz) {
+			return fail(404);
+		}
+
+		if (quizz.owner_uuid !== user.uuid) {
+			return fail(403);
+		}
+
+		let question = await getQuestion(params.question_uuid);
+		if (!question) {
+			return fail(404);
+		}
+
+		await db.delete(question_parts)
+			.where(eq(question_parts.question_uuid, question.uuid));
+		await db.delete(questions)
+			.where(eq(questions.uuid, question.uuid));
+
+		let question_rows = await db.select()
+			.from(questions)
+			.orderBy(asc(questions.position));
+		Promise.all(question_rows.map(async (q, i) => await db.update(questions).set({ position: i + 1 }).where(eq(questions.uuid, q.uuid))));
+		return redirect(302, '/dashboard/quizzes/edit/' + params.quizz_uuid);
 	}
 }

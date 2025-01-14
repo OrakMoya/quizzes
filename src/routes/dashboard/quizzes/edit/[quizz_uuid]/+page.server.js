@@ -1,7 +1,7 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
 import { answers, questions, quizzes, sessions, users } from "$lib/server/db/schema";
-import { getResults, getQuizzByShortUUID, getSessionsOfQuizz, getUserByUUID, getSessionByUUID } from "$lib/server/utils";
+import { getResults, getQuizzByShortUUID, getSessionsOfQuizz, getUserByUUID, getSessionByUUID, getQuestion } from "$lib/server/utils";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { eq, max, param } from "drizzle-orm";
 
@@ -85,7 +85,7 @@ export const actions = {
 
 		return redirect(302, '/dashboard/quizzes/edit/' + params.quizz_uuid + '/question/' + uuid);
 	},
-	delete: async ({ request, cookies, params }) => {
+	deleteSession: async ({ request, cookies, params }) => {
 		let user = await getCurrentUser(cookies);
 		if (!user) {
 			return fail(403);
@@ -117,5 +117,5 @@ export const actions = {
 			.where(eq(sessions.uuid, session_uuid));
 
 		return { success: true };
-	}
+	},
 }

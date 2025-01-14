@@ -131,3 +131,12 @@ export async function getSessionByUUID(uuid) {
 		.from(sessions)
 		.where(eq(sessions.uuid, uuid))).at(0);
 }
+
+
+/**
+ * @param {string} uuid
+ */
+export async function getAnswersOfSessionByUUID(uuid) {
+	return await db.select().from(answers)
+		.where(eq(answers.session_uuid, uuid));
+}
