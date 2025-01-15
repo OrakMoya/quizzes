@@ -1,8 +1,9 @@
 import { getCurrentUser } from '$lib/auth/auth';
 import { db } from '$lib/server/db';
-import { users } from '$lib/server/db/schema';
+import { users, users } from '$lib/server/db/schema';
 import { fail, redirect } from '@sveltejs/kit';
 import * as bcrypt from "bcrypt";
+import { eq } from 'drizzle-orm';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ cookies }) {
@@ -18,7 +19,8 @@ export const actions = {
 		let exploded = {
 			username: data.get('username'),
 			email: data.get('email'),
-			password: data.get('password')
+			password: data.get('password'),
+			password_confirmation: data.get('password_confirmation')
 		};
 		if (!exploded.username)
 			return fail(400, { username: exploded.username, missing: true });
@@ -26,6 +28,17 @@ export const actions = {
 			return fail(400, { email: exploded.email, missing: true });
 		if (!exploded.password)
 			return fail(400, { password: exploded.password, missing: true });
+		if (!exploded.password_confirmation)
+			return fail(400, { password: exploded.password, missing: true });
+		if (exploded.password_confirmation !== exploded.password) {
+			return fail(400, { password: exploded.password, passwords_dont_match: true });
+		}
+
+		let email_exists = (await db.select({ email: users.email }).from(users).where(eq(users.email, exploded.email.toString())))
+			.length;
+		if (email_exists) {
+			return fail(400, { email: exploded.email, exists: true });
+		}
 
 		let salt = await bcrypt.genSalt(10);
 		let pwd_hash = await bcrypt.hash(exploded.password.toString(), salt);

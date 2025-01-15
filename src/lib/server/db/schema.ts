@@ -14,6 +14,8 @@ const uuids = {
 
 export const users = sqliteTable('users', {
 	...uuids,
+	first_name: text('first_name', {mode: 'text'}),
+	last_name: text('last_name', {mode: 'text'}),
 	username: text('username', { mode: 'text' }).notNull(),
 	email: text('email', { mode: 'text' }).notNull(),
 	password: text('password', { mode: 'text' }).notNull(),

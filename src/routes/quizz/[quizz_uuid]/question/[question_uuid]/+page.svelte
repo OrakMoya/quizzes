@@ -7,6 +7,7 @@
 	let question = $state(data.question);
 	let parts = $state(data.parts);
 	let parts_stringified = $state('');
+	console.log(data);
 
 	$effect(() => {
 		question = data.question;
@@ -22,7 +23,7 @@
 </div>
 {#key parts}
 	{#each parts as part, i}
-		{part.question}
+		{part.text}
 		<Decider bind:part={parts[i]} />
 	{/each}
 {/key}

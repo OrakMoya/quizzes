@@ -20,7 +20,7 @@ export let actions = {
 			.limit(1)).at(0);
 
 		if (!quizz) {
-			return fail(400, { quizz_uuid: quizz_uuid, missing: true });
+			return fail(404, {quizz_uuid, incorrect: true});
 		}
 
 		return redirect(302, '/quizz/' + quizz_uuid);

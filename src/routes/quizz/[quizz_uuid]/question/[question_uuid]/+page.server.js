@@ -37,7 +37,11 @@ export async function load({ request, params, cookies }) {
 	}
 
 	let question = answers_rows[0].question_copy;
-	let parts = answers_rows.map((answer) => answer.question_part_copy);
+	let parts = answers_rows.map((answer) => {
+		answer.question_part_copy.correct_data = [];
+		return answer.question_part_copy;
+	}
+	);
 
 	return { question, parts };
 }
