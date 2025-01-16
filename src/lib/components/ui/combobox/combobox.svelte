@@ -11,7 +11,8 @@
 		options = $bindable([]),
 		placeholder = 'Select...',
 		onChange = (_: string) => {},
-		value = $bindable('')
+		value = $bindable(''),
+		...rest
 	} = $props();
 
 	let open = $state(false);
@@ -35,7 +36,7 @@
 		{#snippet child({ props })}
 			<Button
 				variant="outline"
-				class="w-[200px] justify-between"
+				class="w-[200px] justify-between {rest.class}"
 				{...props}
 				role="combobox"
 				aria-expanded={open}

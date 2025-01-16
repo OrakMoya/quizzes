@@ -5,7 +5,7 @@
 
 	let { part = $bindable() } = $props();
 	if (!part.question_data || !part.question_data.length) {
-		part.question_data = ['Example' ];
+		part.question_data = ['Example'];
 		part.correct_data = [true];
 	}
 
@@ -15,12 +15,16 @@
 	}
 </script>
 
-{#each part.question_data as value, i}
-	<div class="flex w-fit items-center">
-		<Checkbox bind:checked={part.correct_data[i]} id="checkbox-{i}" /><Input
-			type="text"
-			bind:value={part.question_data[i]}
-		/>
+<div>
+	<div class="mb-2">
+		{#each part.question_data as _, i}
+			<div class="flex w-fit items-center gap-x-2 mb-1 pl-4">
+				<Checkbox bind:checked={part.correct_data[i]} id="checkbox-{i}" /><Input
+					type="text"
+					bind:value={part.question_data[i]}
+				/>
+			</div>
+		{/each}
 	</div>
-{/each}
-<Button onclick={addOption}>Add</Button>
+	<Button onclick={addOption} variant="ghost">Add option</Button>
+</div>

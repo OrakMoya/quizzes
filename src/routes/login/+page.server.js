@@ -3,8 +3,8 @@ import { attemptLogin, getCurrentUser } from '$lib/auth/auth';
 
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({cookies}){
-	if(await getCurrentUser(cookies))
+export async function load({ cookies }) {
+	if (await getCurrentUser(cookies))
 		return redirect(302, '/');
 	return {};
 }
@@ -18,7 +18,7 @@ export const actions = {
 			password: data.get('password'),
 		};
 		if (!exploded.email || !exploded.password) {
-			return fail(403, { message: 'Invalid username or password' });
+			return fail(403, { incorrect: true });
 		}
 
 		let token = "";
@@ -26,7 +26,7 @@ export const actions = {
 		try {
 			token = await attemptLogin({ email: exploded.email.toString(), password: exploded.password.toString() })
 		} catch {
-			return fail(403, { message: 'Invalid username or password' });
+			return fail(403, { incorrect: true });
 		}
 
 		cookies.set('token', token, { path: '/' });

@@ -25,16 +25,22 @@
 </script>
 
 <div>
-	<div>
-		Session by {data.user.username}
+	<div class="mb-2 mt-4 text-neutral-500">
+		Session by {data.user?.username ?? '[deleted]'}
 	</div>
-	{#each by_question as QnA}
-		{QnA.question.question}
+	<div class="grid grid-cols-3 gap-4">
+		{#each by_question as QnA, i}
+			<div class="bg-background px-6 pb-8 pt-6 rounded-md border border-accent">
+				<p class="mb-2 text-2xl font-bold">
+					{QnA.question.position}: {QnA.question.question}
+				</p>
 
-		{#each QnA.answers as answer}
-			<div>
-				<Decider review part={answer.question_part_copy} />
+				{#each QnA.answers as answer}
+					<div>
+						<Decider review part={answer.question_part_copy} />
+					</div>
+				{/each}
 			</div>
 		{/each}
-	{/each}
+	</div>
 </div>

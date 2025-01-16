@@ -5,6 +5,7 @@
 	import { ArrowRightIcon, ChevronRightIcon, MoveRight, MoveRightIcon, XIcon } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import NavLink from './NavLink.svelte';
+	import { onMount } from 'svelte';
 
 	/** @typedef {Object} Props
 	 * @prop {{logged_in: boolean}} data
@@ -15,6 +16,7 @@
 	let { data, form } = $props();
 
 	let error_state = $state(false);
+	let quizz_code = $state("");
 
 	$effect(() => {
 		if (form?.incorrect) {
@@ -47,6 +49,7 @@
 								invalid:tracking-normal valid:enabled:font-bold valid:enabled:uppercase valid:enabled:tracking-[0.4em]
 								{error_state ? 'text-red-500' : ''}"
 								placeholder="Quizz code..."
+								bind:value={quizz_code}
 								name="quizz_uuid"
 							></Input>
 							<button

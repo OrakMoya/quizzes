@@ -1,7 +1,7 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
 import { answers, questions, quizzes, sessions, users } from "$lib/server/db/schema";
-import { getResults, getQuizzByShortUUID, getSessionsOfQuizz, getUserByUUID, getSessionByUUID, getQuestion } from "$lib/server/utils";
+import { getResults, getQuizzByShortUUID, getSessionsOfQuizz, getUserByUUID, getSessionByUUID, getQuestion, getFinishedSessionsOfQuizz } from "$lib/server/utils";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { eq, max, param } from "drizzle-orm";
 
@@ -18,7 +18,7 @@ export async function load({ params, cookies }) {
 		return error(404);
 	}
 
-	let current_sessions = await getSessionsOfQuizz(quizz.uuid) ?? [];
+	let current_sessions = await getFinishedSessionsOfQuizz(quizz.uuid) ?? [];
 	let expanded_sessions = await Promise.all(current_sessions.map(async session => {
 		let result = await getResults(session.uuid);
 		let user = await getUserByUUID(session.user_uuid);

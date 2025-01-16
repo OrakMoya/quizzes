@@ -78,6 +78,21 @@ export async function getSessionsOfQuizz(uuid) {
 }
 
 /**
+ * @param {string} uuid
+ */
+export async function getFinishedSessionsOfQuizz(uuid) {
+
+	if (uuid) {
+		let session_rows = await db.select()
+			.from(sessions)
+			.where(and(eq(sessions.quizz_uuid, uuid), eq(sessions.in_progress, 0)))
+			.orderBy(desc(sessions.updated_at));
+		return session_rows;
+	}
+	return null;
+}
+
+/**
  * @param {string} short_uuid
  */
 export async function getQuizzByShortUUID(short_uuid) {

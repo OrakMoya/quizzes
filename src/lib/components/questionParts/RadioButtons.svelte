@@ -15,23 +15,27 @@
 	}
 </script>
 
-<RadioGroup.Root bind:value={part.correct_data}>
-	{#each part.question_data as value, i}
-		<div class="flex w-fit items-center">
-			<RadioGroup.Item value="{i}-{part.question_data[i]}" id="{i}-{part.question_data[i]}" /><Input
-				type="text"
-				bind:value={() => part.question_data[i],
-				(value) => {
-					if (part.correct_data === `${i}-${part.question_data[i]}`) {
-						console.log(part.correct_data);
-						part.correct_data = `${i}-${value}`;
-						console.log(part.correct_data);
-					}
-					part.question_data[i] = value;
-				}}
-			/>
-		</div>
-	{/each}
-</RadioGroup.Root>
-
-<Button onclick={addOption}>Add</Button>
+<div>
+	<RadioGroup.Root bind:value={part.correct_data} class="mb-2">
+		{#each part.question_data as value, i}
+			<div class="flex w-fit items-center gap-x-2 pl-4">
+				<RadioGroup.Item
+					value="{i}-{part.question_data[i]}"
+					id="{i}-{part.question_data[i]}"
+				/><Input
+					type="text"
+					bind:value={() => part.question_data[i],
+					(value) => {
+						if (part.correct_data === `${i}-${part.question_data[i]}`) {
+							console.log(part.correct_data);
+							part.correct_data = `${i}-${value}`;
+							console.log(part.correct_data);
+						}
+						part.question_data[i] = value;
+					}}
+				/>
+			</div>
+		{/each}
+	</RadioGroup.Root>
+	<Button onclick={addOption} variant="ghost">Add option</Button>
+</div>

@@ -1,7 +1,7 @@
 <script>
 	import { MoveRightIcon } from 'lucide-svelte';
 
-	let { href, rel = '', preload_data = 'on', children, ...rest } = $props();
+	let { href, rel = '', preload_data = '', children, ...rest } = $props();
 </script>
 
 <a

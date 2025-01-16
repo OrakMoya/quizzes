@@ -27,12 +27,14 @@ export async function getCurrentUser(cookies) {
 			.limit(1);
 		let row = rows.at(0)
 
+
 		if (!row)
 			throw new Error("Token expired.");
 
 		// Refresh
-		let ts = Date.now() / 1000;
-		if ((ts - token_data.iat) < 600) {
+		let ts = Date.now() / 1000
+		if ((ts - token_data.payload.iat) > 600) {
+			console.log("refreshing token");
 			let token = jwt.sign({ uuid: row.uuid }, APP_SECRET, { expiresIn: '60m' });
 			cookies.set('token', token, { path: '/' });
 		}

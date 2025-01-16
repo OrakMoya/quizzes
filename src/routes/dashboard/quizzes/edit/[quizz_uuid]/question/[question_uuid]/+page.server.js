@@ -3,7 +3,7 @@ import { db } from "$lib/server/db";
 import { question_parts, questions, questions, questions } from "$lib/server/db/schema";
 import { getPartsOfQuestion, getQuestion, getQuizzByShortUUID } from "$lib/server/utils";
 import { error, fail, json, redirect } from "@sveltejs/kit";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 
 /** @type {import("./$types").PageServerLoad} */
@@ -86,6 +86,8 @@ export const actions = {
 			return fail(404);
 		}
 
+		let position = question.position;
+
 		await db.delete(question_parts)
 			.where(eq(question_parts.question_uuid, question.uuid));
 		await db.delete(questions)
@@ -93,8 +95,33 @@ export const actions = {
 
 		let question_rows = await db.select()
 			.from(questions)
+			.where(eq(questions.quizz_uuid, quizz.uuid))
 			.orderBy(asc(questions.position));
-		Promise.all(question_rows.map(async (q, i) => await db.update(questions).set({ position: i + 1 }).where(eq(questions.uuid, q.uuid))));
+		await Promise.all(
+			question_rows.map(
+				async (q, i) => {
+					console.log(i);
+					await db.update(questions)
+						.set({ position: i + 1 })
+						.where(eq(questions.uuid, q.uuid))
+				}
+			));
+		if (question_rows.length) {
+			let next_question = (await db.select()
+				.from(questions)
+				.where(and(eq(questions.position, position), eq(questions.quizz_uuid, quizz.uuid)))
+			).at(0);
+			if (next_question) {
+				return redirect(302, '/dashboard/quizzes/edit/' + params.quizz_uuid + '/question/' + next_question.uuid);
+			}
+			next_question = (await db.select()
+				.from(questions)
+				.where(and(eq(questions.position, position - 1), eq(questions.quizz_uuid, quizz.uuid)))
+			).at(0);
+			if (next_question) {
+				return redirect(302, '/dashboard/quizzes/edit/' + params.quizz_uuid + '/question/' + next_question.uuid);
+			}
+		}
 		return redirect(302, '/dashboard/quizzes/edit/' + params.quizz_uuid);
 	}
 }

@@ -67,7 +67,7 @@ export const sessions = sqliteTable('sessions', {
 		.references(() => users.uuid)
 		.notNull(),
 	quizz_uuid: text('quizz_uuid', { mode: 'text' })
-		.references(() => quizzes.uuid)
+		.references(() => quizzes.uuid, {onDelete: 'cascade'})
 		.notNull(),
 	in_progress: integer('in_progress').default(0),
 	...timestamps
@@ -80,7 +80,7 @@ export const answers = sqliteTable('answers', {
 	question_part_uuid: text('question_part_uuid', { mode: 'text' })
 		.notNull(),
 	user_uuid: text('user_uuid', { mode: 'text' })
-		.references(() => users.uuid)
+		.references(() => users.uuid, {onDelete: 'cascade'})
 		.notNull(),
 	question_copy: text('question_copy', { mode: 'json' })
 		.$type<typeof questions.$inferInsert>()
@@ -90,7 +90,7 @@ export const answers = sqliteTable('answers', {
 		.notNull(),
 	answers: text('answers', { mode: 'json' }).$type<any>(),
 	session_uuid: text('session_uuid', { mode: 'text' })
-		.references(() => sessions.uuid)
+		.references(() => sessions.uuid, {onDelete: 'cascade'})
 		.notNull(),
 	...timestamps
 })
