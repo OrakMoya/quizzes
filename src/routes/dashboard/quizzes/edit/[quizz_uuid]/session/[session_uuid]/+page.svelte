@@ -28,18 +28,20 @@
 	<div class="mb-2 mt-4 text-neutral-500">
 		Session by {data.user?.username ?? '[deleted]'}
 	</div>
-	<div class="grid grid-cols-3 gap-4">
+	<div class="w-full">
 		{#each by_question as QnA, i}
-			<div class="bg-background px-6 pb-8 pt-6 rounded-md border border-accent">
+			<div class="pb-8 pt-6 mb-4">
 				<p class="mb-2 text-2xl font-bold">
 					{QnA.question.position}: {QnA.question.question}
 				</p>
 
-				{#each QnA.answers as answer}
-					<div>
-						<Decider review part={answer.question_part_copy} />
-					</div>
-				{/each}
+				<div class="grid grid-cols-3 gap-x-4">
+					{#each QnA.answers as answer}
+						<div>
+							<Decider review part={answer.question_part_copy} />
+						</div>
+					{/each}
+				</div>
 			</div>
 		{/each}
 	</div>

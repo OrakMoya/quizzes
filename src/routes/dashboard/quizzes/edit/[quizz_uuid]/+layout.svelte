@@ -19,7 +19,7 @@
 </script>
 
 <div class="mx-auto max-w-screen-lg">
-	<div class="flex items-center gap-x-2">
+	<div class="flex items-center justify-between gap-x-12">
 		<a
 			class="w-fit whitespace-nowrap rounded-md border border-accent border-opacity-0 p-2 data-[focused=true]:border-opacity-100 data-[focused=true]:bg-background"
 			data-focused={page.url.pathname.endsWith(page.params.quizz_uuid)}
@@ -47,33 +47,34 @@
 				<p class="p-2 py-4 text-sm text-neutral-500">No questions yet...</p>
 			{/if}
 		</div>
-		<form
-			action={'/dashboard/quizzes/edit/' + page.params.quizz_uuid + '?/addQuestion'}
-			method="post"
-			use:enhance
-		>
-			<Button type="submit"><PlusIcon class="" /></Button>
-		</form>
-		<Button
-			onclick={() => {
-				navigator.clipboard.writeText(data.quizz.uuid.substring(0, 5));
-				codeRecentlyCopied = true;
-				setTimeout(() => (codeRecentlyCopied = false), 2000);
-			}}
-		>
-			<div class="relative size-4">
-				{#if codeRecentlyCopied}
-					<div transition:fade={{ duration: 100 }} class="absolute h-full w-full">
-						<CopyCheck class="size-4" />
-					</div>
-				{:else}
-					<!-- else content here -->
-					<div transition:fade={{ duration: 100 }} class="absolute h-full w-full">
-						<Copy class="size-4" />
-					</div>
-				{/if}
-			</div>
-		</Button>
+		<div class="flex items-center gap-x-2">
+			<form
+				action={'/dashboard/quizzes/edit/' + page.params.quizz_uuid + '?/addQuestion'}
+				method="post"
+				use:enhance
+			>
+				<Button type="submit"><PlusIcon class="" /></Button>
+			</form>
+			<Button
+				onclick={() => {
+					navigator.clipboard.writeText(data.quizz.uuid.substring(0, 5));
+					codeRecentlyCopied = true;
+					setTimeout(() => (codeRecentlyCopied = false), 2000);
+				}}
+			>
+				<div class="relative size-4">
+					{#if codeRecentlyCopied}
+						<div transition:fade={{ duration: 100 }} class="absolute h-full w-full">
+							<CopyCheck class="size-4" />
+						</div>
+					{:else}
+						<div transition:fade={{ duration: 100 }} class="absolute h-full w-full">
+							<Copy class="size-4" />
+						</div>
+					{/if}
+				</div>
+			</Button>
+		</div>
 	</div>
 
 	{@render children()}

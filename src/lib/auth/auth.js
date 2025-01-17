@@ -32,9 +32,8 @@ export async function getCurrentUser(cookies) {
 			throw new Error("Token expired.");
 
 		// Refresh
-		let ts = Date.now() / 1000
-		if ((ts - token_data.payload.iat) > 600) {
-			console.log("refreshing token");
+		let ts = Math.floor(Date.now() / 1000)
+		if ((ts - token_data.payload.iat) > 60) {
 			let token = jwt.sign({ uuid: row.uuid }, APP_SECRET, { expiresIn: '60m' });
 			cookies.set('token', token, { path: '/' });
 		}
