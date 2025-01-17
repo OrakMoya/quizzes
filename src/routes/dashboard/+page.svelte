@@ -1,5 +1,8 @@
 <script>
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<div class="px-4">
+	<div class="mx-auto w-full max-w-screen-lg">
+		<h1 class="text-3xl font-bold mt-8">Welcome to Quizzes!</h1>
+	</div>
+</div>

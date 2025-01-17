@@ -10,6 +10,7 @@
 		if (page.url.pathname.search('question') !== -1) {
 			document.getElementById(`question-${page.params.question_uuid}`)?.scrollIntoView({
 				inline: 'center',
+				block: 'nearest',
 				behavior: 'smooth'
 			});
 		}
@@ -19,19 +20,14 @@
 </script>
 
 <div class="mx-auto max-w-screen-lg">
-	<div class="flex items-center justify-between gap-x-12">
-		<a
-			class="w-fit whitespace-nowrap rounded-md border border-accent border-opacity-0 p-2 data-[focused=true]:border-opacity-100 data-[focused=true]:bg-background"
-			data-focused={page.url.pathname.endsWith(page.params.quizz_uuid)}
-			href="/dashboard/quizzes/edit/{page.params.quizz_uuid}">Results</a
-		>
+	<div class="flex flex-col items-center justify-between gap-x-4 gap-y-4 md:flex-row">
 		<div
-			class="flex w-full items-center justify-start gap-x-2 overflow-scroll rounded-md border border-accent"
+			class="flex w-full basis-auto items-center justify-start gap-x-2 overflow-scroll rounded-xl border border-neutral-700 bg-neutral-800"
 		>
 			{#each data.questions as question}
 				<div
 					data-focused={page.url.pathname.endsWith(question.uuid)}
-					class="group flex w-fit items-center justify-start border-x border-accent border-opacity-0 first:border-l-0 last:border-r-0 data-[focused=true]:border-opacity-100"
+					class="group flex w-fit items-center justify-start border-x border-neutral-600 border-opacity-0 first:border-l-0 last:border-r-0 data-[focused=true]:border-opacity-100"
 				>
 					<a
 						id="question-{question.uuid}"
@@ -47,33 +43,40 @@
 				<p class="p-2 py-4 text-sm text-neutral-500">No questions yet...</p>
 			{/if}
 		</div>
-		<div class="flex items-center gap-x-2">
-			<form
-				action={'/dashboard/quizzes/edit/' + page.params.quizz_uuid + '?/addQuestion'}
-				method="post"
-				use:enhance
+		<div class="flex items-center gap-x-4 justify-between w-full md:w-fit">
+			<a
+				class="w-fit whitespace-nowrap rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-4 data-[focused=true]:bg-background"
+				data-focused={page.url.pathname.endsWith(page.params.quizz_uuid)}
+				href="/dashboard/quizzes/edit/{page.params.quizz_uuid}">Results</a
 			>
-				<Button type="submit"><PlusIcon class="" /></Button>
-			</form>
-			<Button
-				onclick={() => {
-					navigator.clipboard.writeText(data.quizz.uuid.substring(0, 5));
-					codeRecentlyCopied = true;
-					setTimeout(() => (codeRecentlyCopied = false), 2000);
-				}}
-			>
-				<div class="relative size-4">
-					{#if codeRecentlyCopied}
-						<div transition:fade={{ duration: 100 }} class="absolute h-full w-full">
-							<CopyCheck class="size-4" />
-						</div>
-					{:else}
-						<div transition:fade={{ duration: 100 }} class="absolute h-full w-full">
-							<Copy class="size-4" />
-						</div>
-					{/if}
-				</div>
-			</Button>
+			<div class="flex items-center gap-x-2">
+				<form
+					action={'/dashboard/quizzes/edit/' + page.params.quizz_uuid + '?/addQuestion'}
+					method="post"
+					use:enhance
+				>
+					<Button type="submit"><PlusIcon class="" /></Button>
+				</form>
+				<Button
+					onclick={() => {
+						navigator.clipboard.writeText(data.quizz.uuid.substring(0, 5));
+						codeRecentlyCopied = true;
+						setTimeout(() => (codeRecentlyCopied = false), 2000);
+					}}
+				>
+					<div class="relative size-4">
+						{#if codeRecentlyCopied}
+							<div transition:fade={{ duration: 100 }} class="absolute h-full w-full">
+								<CopyCheck class="size-4" />
+							</div>
+						{:else}
+							<div transition:fade={{ duration: 100 }} class="absolute h-full w-full">
+								<Copy class="size-4" />
+							</div>
+						{/if}
+					</div>
+				</Button>
+			</div>
 		</div>
 	</div>
 

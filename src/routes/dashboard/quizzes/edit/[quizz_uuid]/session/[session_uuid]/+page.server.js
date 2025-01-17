@@ -10,24 +10,25 @@ export async function load({ params, cookies }) {
 		error(403);
 	}
 	let quizz = await getQuizzByShortUUID(params.quizz_uuid);
-	if(!quizz){
+	if (!quizz) {
 		error(404);
 	}
 
 	let session = await getSessionByUUID(params.session_uuid)
-	if(!session){
+	if (!session) {
 		error(404);
 	}
 
-	let answer_rows = await getAnswersOfSessionByUUID(session.uuid);
-	if(answer_rows == null){
+	let answer_rows = (await getAnswersOfSessionByUUID(session.uuid))
+		.toSorted((a, b) => a.question_copy.position - b.question_copy.position);
+	if (answer_rows == null) {
 		throw Error("Something went wrong");
 	}
 
 	let session_user = await getUserByUUID(session.user_uuid);
 
 
-	return { answers: answer_rows, user:session_user };
+	return { answers: answer_rows, user: session_user };
 
 
 }

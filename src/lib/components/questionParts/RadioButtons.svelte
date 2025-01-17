@@ -3,6 +3,7 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group';
 	import { Input } from '$lib/components/ui/input';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { TrashIcon } from 'lucide-svelte';
 
 	let { part = $bindable() } = $props();
 	if (!part.question_data || !part.question_data.length) {
@@ -17,8 +18,8 @@
 
 <div>
 	<RadioGroup.Root bind:value={part.correct_data} class="mb-2">
-		{#each part.question_data as value, i}
-			<div class="flex w-fit items-center gap-x-2 pl-4">
+		{#each part.question_data as _, i}
+			<div class="flex w-full md:w-fit items-center gap-x-4 pl-4">
 				<RadioGroup.Item
 					value="{i}-{part.question_data[i]}"
 					id="{i}-{part.question_data[i]}"
@@ -34,6 +35,12 @@
 						part.question_data[i] = value;
 					}}
 				/>
+				<Button
+					variant="ghost"
+					onclick={() => {
+						part.question_data.splice(i, 1);
+					}}><TrashIcon /></Button
+				>
 			</div>
 		{/each}
 	</RadioGroup.Root>

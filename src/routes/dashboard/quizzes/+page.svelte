@@ -3,8 +3,16 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
-	import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-svelte';
+	import {
+		CopyCheckIcon,
+		CopyIcon,
+		ListChecksIcon,
+		PencilIcon,
+		PlusIcon,
+		TrashIcon
+	} from 'lucide-svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { uuid } from 'drizzle-orm/pg-core';
 
 	let { data, form } = $props();
 
@@ -16,6 +24,8 @@
 			delete_dialogs_open.fill(false);
 		}
 	});
+
+	let recentlyCopiedUUID = $state('');
 </script>
 
 <div class="mx-auto max-w-screen-lg">
@@ -42,17 +52,40 @@
 	</Dialog.Root>
 </div>
 
-<div class="mx-auto mt-4 grid max-w-screen-lg grid-cols-3 gap-4">
+<div class="mx-auto mt-4 grid max-w-screen-lg grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 	{#each data.quizzes as quizz, i}
 		<div class="flex min-h-52 justify-between rounded-md border border-accent bg-background p-4">
 			<div>
-				<p class=" text-2xl font-bold">{quizz.title}</p>
-				<p class="mb-4 text-sm text-neutral-500">A quizz by {quizz.owner_username}</p>
+				<p class=" text-2xl font-bold mb-4">{quizz.title}</p>
 				<p class="text-sm text-neutral-500">Created: {quizz.created_at?.toLocaleDateString()}</p>
 				<p class="text-sm text-neutral-500">Updated: {quizz.updated_at?.toLocaleDateString()}</p>
 			</div>
 			<div class="flex flex-col gap-y-2">
-				<a class="block" href={'quizzes/edit/' + quizz.uuid}>
+				<Button
+					onclick={() => {
+						recentlyCopiedUUID = quizz.uuid;
+						navigator.clipboard.writeText(quizz.uuid.substring(0, 5));
+						setTimeout(() => (recentlyCopiedUUID = ''), 2000);
+					}}
+					variant="outline"
+				>
+					<CopyIcon class="absolute" />
+					<CopyCheckIcon
+						data-visible={recentlyCopiedUUID === quizz.uuid}
+						class="absolute opacity-0 transition-opacity duration-300 data-[visible=true]:opacity-100"
+					/>
+				</Button>
+				<a href={'quizzes/edit/' + quizz.uuid}>
+					<Button variant="outline">
+						<ListChecksIcon />
+					</Button>
+				</a>
+				<a
+					class="block"
+					href={'quizzes/edit/' +
+						quizz.uuid +
+						(quizz.first_question ? '/question/' + quizz.first_question.uuid : '')}
+				>
 					<Button variant="outline">
 						<PencilIcon />
 					</Button>

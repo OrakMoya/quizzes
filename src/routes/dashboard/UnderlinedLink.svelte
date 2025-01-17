@@ -9,7 +9,7 @@
 	{href}
 	data-sveltekit-preload-data={preload}
 	data-current={current}
-	class="data group flex flex-col text-xl data-[current=true]:font-semibold {rest.class} transition-all duration-100"
+	class="data group w-fit flex flex-col text-base data-[current=true]:font-semibold sm:text-lg md:text-xl {rest.class} transition-all duration-100"
 >
 	{@render children()}
 	<div

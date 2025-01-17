@@ -5,13 +5,13 @@
 	let { data } = $props();
 </script>
 
-<section class="grid grid-cols-2 place-items-center">
+<section class="grid w-full grid-cols-2 place-items-center items-start">
 	<div class="">
 		{#if data.quizz}
-			<p class="mb-1 text-neutral-500">{data.quizz.updated_at?.toLocaleDateString()}</p>
-			<p class="mb-12 text-6xl font-bold">
+			<p class="mb-2 text-6xl font-bold">
 				{data.quizz.title}
 			</p>
+			<p class="mb-12 text-neutral-500">A quizz by {data.author.username}</p>
 		{/if}
 
 		<div class="flex gap-x-8">
@@ -26,13 +26,24 @@
 		</div>
 	</div>
 	<div>
-		<span class="text-neutral-500">Past results</span>
+		<p class="w-full text-center text-neutral-500">Past results</p>
 		{#if data.past_results}
 			{#each data.past_results as past_result}
-				<div class="flex gap-x-2 items-center">
-					<span class="font-bold text-lg">{past_result.achieved}</span>
-					<span class="text-3xl">/</span>
-					<span class="font-bold text-lg">{past_result.total}</span>
+				<div class="mb-2 grid grid-cols-2 items-center gap-x-2">
+					<span class="w-full text-right text-lg font-bold"
+						>{Math.floor((past_result.achieved / past_result.total) * 100)}%</span
+					>
+					<div
+						class=" flex w-fit place-items-center items-center gap-x-1 px-2 py-1 text-center text-neutral-500"
+					>
+						<span class="w-full text-right text-lg font-bold"
+							>{Math.round(past_result.achieved * 100) / 100}</span
+						>
+						<span class="text-3xl">/</span>
+						<span class="w-full text-left text-lg font-bold"
+							>{Math.round(past_result.total * 100) / 100}</span
+						>
+					</div>
 				</div>
 			{/each}
 		{/if}

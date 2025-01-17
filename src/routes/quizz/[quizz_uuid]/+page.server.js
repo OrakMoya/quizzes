@@ -2,7 +2,7 @@ import { deserialize } from "$app/forms";
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
 import { answers, question_parts, questions, questions, questions, quizzes, sessions, users } from "$lib/server/db/schema";
-import { getResults } from "$lib/server/utils";
+import { getResults, getUserByUUID } from "$lib/server/utils";
 import { fail, redirect } from "@sveltejs/kit";
 import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull, like } from "drizzle-orm";
 import { get } from "svelte/store";
@@ -23,6 +23,7 @@ export async function load({ cookies, params }) {
 		.from(quizzes)
 		.where(like(quizzes.uuid, quizz_uuid + "%"))
 		.limit(1)).at(0);
+
 
 	if (!quizz) {
 		return fail(404);
@@ -56,8 +57,10 @@ export async function load({ cookies, params }) {
 
 	let past_results = (await Promise.all(past_sessions.map(async session => await getResults(session.uuid)))).filter(result => result !== null) ?? [];
 
+	let author = await getUserByUUID(quizz.owner_uuid);
 
-	return { session, past_results };
+
+	return { session, past_results, author };
 }
 
 

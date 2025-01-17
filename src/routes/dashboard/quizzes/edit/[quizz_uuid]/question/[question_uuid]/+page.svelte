@@ -81,18 +81,21 @@
 
 	$effect(() => {
 		data;
+		console.log("effect");
+		setTimeout(() => {
+			if (inProgressNavigationURL && form?.success) {
+				goto(inProgressNavigationURL);
+				inProgressNavigationURL = null;
+				return;
+			}
 
-		if (inProgressNavigationURL && form?.success) {
-			goto(inProgressNavigationURL);
-			inProgressNavigationURL = null;
-			return;
-		}
+			question = data.question;
+			questionParts = data.current_question_parts;
+			initialQuestion = $state.snapshot(data.question);
+			initialQuestionParts = $state.snapshot(data.current_question_parts ?? []);
+			deleteQuestionDialogOpen = false;
+		}, 1);
 
-		question = data.question;
-		questionParts = data.current_question_parts;
-		initialQuestion = $state.snapshot(data.question);
-		initialQuestionParts = $state.snapshot(data.current_question_parts ?? []);
-		deleteQuestionDialogOpen = false;
 		transitionDuration = 0;
 		setTimeout(() => (transitionDuration = 200), 5);
 	});
@@ -145,7 +148,7 @@
 
 <div class="mt-8">
 	<div class="flex items-center justify-between">
-		<p class="mb-4 text-4xl font-bold">
+		<p class="mb-4 text-2xl md:text-4xl font-bold">
 			Question #{question.position}
 		</p>
 		<div class="flex gap-x-2">

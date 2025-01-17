@@ -3,7 +3,7 @@ import { db } from "$lib/server/db";
 import { questions, quizzes, sessions, users } from "$lib/server/db/schema";
 import { getQuizzByShortUUID, getUserByUUID } from "$lib/server/utils";
 import { fail, redirect } from "@sveltejs/kit";
-import { eq, param } from "drizzle-orm";
+import { asc, eq, param } from "drizzle-orm";
 import { MySqlTimestampString } from "drizzle-orm/mysql-core";
 
 
@@ -17,7 +17,7 @@ export async function load({ cookies }) {
 		.where(eq(quizzes.owner_uuid, user.uuid));
 
 	let quizzes_data = await Promise.all(quizzes_rows.map(
-		async quizz => ({ ...quizz, owner_username: (await getUserByUUID(quizz.owner_uuid))?.username ?? '[deleted]' })
+		async quizz => ({ ...quizz, owner_username: (await getUserByUUID(quizz.owner_uuid))?.username ?? '[deleted]', first_question: (await db.select().from(questions).where(eq(questions.quizz_uuid, quizz.uuid)).orderBy(asc(questions.position))).at(0), has_results: (await db.select().from(sessions).where(eq(sessions.quizz_uuid, quizz.uuid))).length ? true : false })
 	));
 
 	return { quizzes: quizzes_data };
@@ -52,23 +52,23 @@ export const actions = {
 	},
 	deleteQuizz: async ({ request, cookies, params }) => {
 		let user = await getCurrentUser(cookies);
-		if(!user){
+		if (!user) {
 			return fail(403);
 		}
 
 		let formData = await request.formData();
 
 		let quizzUuid = formData.get('quizz_uuid');
-		if(!quizzUuid){
-			return fail(400, {quizz_uuid: quizzUuid, missing: true});
+		if (!quizzUuid) {
+			return fail(400, { quizz_uuid: quizzUuid, missing: true });
 		}
 
 		let quizz = await getQuizzByShortUUID(quizzUuid.toString());
-		if(!quizz){
+		if (!quizz) {
 			return fail(404);
 		}
 
-		if(quizz.owner_uuid !== user.uuid){
+		if (quizz.owner_uuid !== user.uuid) {
 			return fail(403);
 		}
 

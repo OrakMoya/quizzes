@@ -6,22 +6,22 @@
 	import { Label } from '$lib/components/ui/label';
 	import { MoveDownIcon, MoveUpIcon, TrashIcon } from 'lucide-svelte';
 
-	let { 
+	let {
 		part = $bindable(),
-		onDelete = () => {}, 
-		onMoveUp = ()=>{},
-		onMoveDown = ()=>{},
-		index = $bindable(0) 
+		onDelete = () => {},
+		onMoveUp = () => {},
+		onMoveDown = () => {},
+		index = $bindable(0)
 	} = $props();
 </script>
 
-<div class="mb-2 flex rounded-md border border-accent bg-background p-4 py-6">
+<div class="mb-2 flex rounded-md border border-accent bg-background p-4 py-6 gap-x-4">
 	<div class="w-full">
-		<div class="mb-1 flex items-center justify-between gap-x-2">
+		<div class="mb-4 flex items-center justify-between gap-x-2 md:mb-1">
 			<span class="text-xl font-bold">Question part {index + 1}</span>
 		</div>
-		<div class="mb-2 flex flex-wrap gap-x-2">
-			<div class="flex w-fit items-end gap-x-2">
+		<div class="mb-4 md:mb-2 flex flex-wrap gap-x-2 gap-y-2">
+			<div class="flex w-full md:w-fit flex-col gap-x-2 gap-y-2 md:flex-row md:items-end">
 				<div>
 					<Label for="question-part-text">Part text:</Label>
 					<Input id="question-part-text" type="text" bind:value={part.text} />
@@ -44,7 +44,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="flex w-fit gap-x-2">
+			<div class="flex w-full md:w-fit flex-col gap-x-2 gap-y-2 md:flex-row">
 				<div>
 					<Label for="carries">Points for correct</Label>
 					<Input type="number" bind:value={part.carries} id="carries" placeholder="Carries" />
@@ -62,8 +62,8 @@
 		</div>
 		<Decider bind:part />
 	</div>
-	<div class="flex flex-col justify-between gap-2 items-center">
-		<div class="flex flex-col gap-2 items-center justify-center">
+	<div class="flex flex-col items-center justify-between gap-2">
+		<div class="flex flex-col items-center justify-center gap-2">
 			<Button variant="outline" onclick={() => onMoveUp()}><MoveUpIcon /></Button>
 			<Button variant="outline" onclick={() => onMoveDown()}><MoveDownIcon /></Button>
 		</div>
