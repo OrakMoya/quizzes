@@ -11,7 +11,7 @@
 	class="
 						group
 						flex w-full items-center
-						gap-x-2 text-xl text-neutral-500
+						gap-x-2 md:text-xl text-neutral-500
 						transition-all hover:text-white
 	{rest.class}
 						"

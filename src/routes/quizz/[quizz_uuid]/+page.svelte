@@ -6,7 +6,7 @@
 	console.log(data);
 </script>
 
-<section class="grid w-full grid-cols-2 place-items-center items-start">
+<section class="grid w-full grid-cols-1 gap-x-4 gap-y-16 md:grid-cols-2 md:place-items-center items-start">
 	<div class="">
 		{#if data.quizz}
 			<p class="mb-2 text-6xl font-bold">
@@ -27,7 +27,7 @@
 		</div>
 	</div>
 	<div>
-		<p class="w-full text-center text-neutral-500">Past results</p>
+		<p class="w-full md:text-center text-neutral-500">Past results</p>
 		{#if data.past_results}
 			{#each data.past_results as past_result}
 				<div class="mb-2 grid grid-cols-2 items-center gap-x-2">

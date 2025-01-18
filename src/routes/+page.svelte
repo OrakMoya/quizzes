@@ -31,9 +31,9 @@
 >
 	<div class="mx-auto flex h-full w-full max-w-screen-md">
 		<div class="flex h-4/5 w-full flex-col items-center justify-center">
-			<span class="mb-10 w-full text-6xl font-bold">Quizzes</span>
+			<span class="mb-10 w-full text-4xl md:text-6xl font-bold">Quizzes</span>
 			<div class="w-full">
-				<div class="flex w-full items-start justify-between">
+				<div class="flex flex-col md:flex-row gap-x-2 gap-y-16 w-full items-start justify-between">
 					<div class="flex flex-col">
 						<form
 							class="mb-2 flex w-fit gap-x-3 rounded-md border border-accent bg-background"
@@ -44,7 +44,7 @@
 							<Input
 								required
 								disabled={!data.logged_in}
-								class="w-[100px] shrink rounded-r-none border-0 pr-0 text-center 
+								class="w-[120px] shrink rounded-r-none border-0 pr-0 text-center 
 								delay-60 placeholder:font-normal placeholder:tracking-normal 
 								placeholder:text-neutral-500 invalid:font-normal invalid:normal-case
 								invalid:tracking-normal valid:enabled:font-bold valid:enabled:uppercase valid:enabled:tracking-[0.4em]

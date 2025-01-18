@@ -267,7 +267,7 @@
 		<ul>
 			{#each data.sessions as session}
 				<li
-					class=" grid grid-cols-4 content-center items-center rounded-md px-4 py-2 text-center text-lg odd:bg-black/40 md:grid-cols-5"
+					class=" grid grid-cols-4 content-center items-center rounded-md px-4 py-4 md:py-2 text-center text-lg odd:bg-black/40 md:grid-cols-5 gap-2"
 				>
 					<span>{session.user.username}</span>
 					<span>{Math.floor(session.result.achieved * 100) / 100}</span>
@@ -276,7 +276,7 @@
 						>{(Math.floor((session.result.achieved / session.result.total) * 100) / 100) *
 							100}%</span
 					>
-					<div class="flex w-full items-center justify-end gap-x-2">
+					<div class="flex w-full md:items-center md:justify-end gap-x-2">
 						<a href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/session/{session.uuid}">
 							<Button><ListChecksIcon /></Button>
 						</a>
