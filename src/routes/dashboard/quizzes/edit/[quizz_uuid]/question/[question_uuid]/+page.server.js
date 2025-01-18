@@ -1,6 +1,6 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
-import { question_parts, questions, questions, questions } from "$lib/server/db/schema";
+import { question_parts, questions } from "$lib/server/db/schema";
 import { getPartsOfQuestion, getQuestion, getQuizzByShortUUID } from "$lib/server/utils";
 import { error, fail, json, redirect } from "@sveltejs/kit";
 import { and, asc, eq } from "drizzle-orm";

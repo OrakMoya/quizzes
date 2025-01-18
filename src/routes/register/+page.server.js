@@ -1,6 +1,6 @@
 import { getCurrentUser } from '$lib/auth/auth';
 import { db } from '$lib/server/db';
-import { users, users } from '$lib/server/db/schema';
+import { users } from '$lib/server/db/schema';
 import { fail, redirect } from '@sveltejs/kit';
 import * as bcrypt from "bcrypt";
 import { eq } from 'drizzle-orm';

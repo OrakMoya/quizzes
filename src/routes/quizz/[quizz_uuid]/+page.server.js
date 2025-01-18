@@ -1,7 +1,7 @@
 import { deserialize } from "$app/forms";
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
-import { answers, question_parts, questions, questions, questions, quizzes, sessions, users } from "$lib/server/db/schema";
+import { answers, question_parts, questions, quizzes, sessions, users } from "$lib/server/db/schema";
 import { getResults, getUserByUUID } from "$lib/server/utils";
 import { fail, redirect } from "@sveltejs/kit";
 import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull, like, lte, or } from "drizzle-orm";
