@@ -2,13 +2,34 @@
 	import { enhance } from '$app/forms';
 	import Decider from '$lib/components/questionPartsQuizz/Decider.svelte';
 	import { ChevronRightIcon } from 'lucide-svelte';
+	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	let { data } = $props();
 	let question = $state(data.question);
 	let parts = $state(data.parts);
 	let parts_stringified = $state('');
-	console.log(data);
+
+	let seconds = $state(data.time_left);
+	let flip = $state(false);
+
+	let date = $derived(new Date(seconds));
+
+	/**
+	 * @type {string | number | NodeJS.Timeout | undefined}
+	 */
+	let countdownTimeout;
+
+	function subtractSecond() {
+		seconds -= 1000;
+		flip = !flip;
+		countdownTimeout = setTimeout(subtractSecond, 1000);
+	}
+
+	countdownTimeout = setTimeout(subtractSecond, 1000);
+	onDestroy(() => {
+		if (countdownTimeout) clearTimeout(countdownTimeout);
+	});
 
 	$effect(() => {
 		question = data.question;
@@ -25,7 +46,7 @@
 		{question.question}
 	</p>
 	{#key parts}
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+		<div class="grid grid-cols-1 gap-2 md:grid-cols-2">
 			{#each parts as part, i}
 				<div class="mb-8">
 					<Decider bind:part={parts[i]} />
@@ -57,6 +78,9 @@
 				<span class="text-xl text-neutral-500 transition-all group-hover:text-white"> Back </span>
 			</button>
 		</form>
+		<span data-flip={flip} class="rounded-md text-xl text-neutral-500 px-4 py-1">
+			{date.toISOString().slice(14, 19)}
+		</span>
 		<form method="post" use:enhance action="?/next">
 			<input type="hidden" name="data" bind:value={parts_stringified} />
 			<button class="group flex items-center justify-center py-2 pl-2 pr-6" type="submit">

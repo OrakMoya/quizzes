@@ -5,11 +5,12 @@
 	import { Label } from '$lib/components/ui/label';
 	import QuestionPartForm from './QuestionPartForm.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { SaveIcon, TrashIcon } from 'lucide-svelte';
+	import { LoaderIcon, SaveIcon, TrashIcon } from 'lucide-svelte';
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { beforeNavigate, goto } from '$app/navigation';
 	import { navigating } from '$app/state';
+	let processing = $state(false);
 
 	let { data, form } = $props(); // Data returned by +page.server.js
 	let question = $state(data.question);
@@ -81,13 +82,16 @@
 
 	$effect(() => {
 		data;
-		console.log("effect");
+		console.log('effect');
 		setTimeout(() => {
 			if (inProgressNavigationURL && form?.success) {
+				confirmLeaveDialogOpen = false;
 				goto(inProgressNavigationURL);
 				inProgressNavigationURL = null;
 				return;
 			}
+
+			processing = false;
 
 			question = data.question;
 			questionParts = data.current_question_parts;
@@ -136,24 +140,36 @@
 					<Button
 						onclick={(e) => {
 							questionForm.requestSubmit();
-							confirmLeaveDialogOpen = false;
 							leaveConfirmed = true;
-						}}>Save and leave</Button
+						}}
+						disabled={!unsaved || processing}
 					>
+						{#if processing}
+							<LoaderIcon class="animate-spin" />
+						{:else}
+							Save and leave
+						{/if}
+					</Button>
 				</div>
 			</div>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-<div class="mt-8">
+<div class="mt-4">
 	<div class="flex items-center justify-between">
-		<p class="mb-4 text-2xl md:text-4xl font-bold">
+		<p class="mb-4 text-2xl font-bold md:text-4xl">
 			Question #{question.position}
 		</p>
 		<div class="flex gap-x-2">
-			<Button form="questionForm" disabled={!unsaved} type="submit"><SaveIcon /></Button>
-			<form>
+			<Button form="questionForm" disabled={!unsaved || processing} type="submit">
+				{#if processing}
+					<LoaderIcon class="animate-spin" />
+				{:else}
+					<SaveIcon />
+				{/if}
+			</Button>
+			<form onsubmit={() => (processing = true)}>
 				<AlertDialog.Root bind:open={deleteQuestionDialogOpen}>
 					<AlertDialog.Trigger>
 						{#snippet child({ props })}
@@ -178,7 +194,14 @@
 		</div>
 	</div>
 
-	<form bind:this={questionForm} id="questionForm" method="post" action="?/save" use:enhance>
+	<form
+		onsubmit={() => (processing = true)}
+		bind:this={questionForm}
+		id="questionForm"
+		method="post"
+		action="?/save"
+		use:enhance
+	>
 		<Label for="question_text" class="text-neutral-500">Question text:</Label>
 		<input
 			class="mb-2 block w-full rounded-md border border-accent bg-background px-2 py-2 text-xl text-white"

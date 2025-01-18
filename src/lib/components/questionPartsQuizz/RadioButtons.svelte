@@ -29,9 +29,9 @@
 					class=""
 					disabled={review}
 					value="{i}-{part.question_data[i]}"
-					id="{i}-{part.question_data[i]}"
+					id="{part.uuid}-{i}-{part.question_data[i]}"
 				/>
-				<Label class="w-full" for="{i}-{part.question_data[i]}">{part.question_data[i]}</Label>
+				<Label class="w-full" for="{part.uuid}-{i}-{part.question_data[i]}">{part.question_data[i]}</Label>
 			</div>
 		{/each}
 	</RadioGroup.Root>

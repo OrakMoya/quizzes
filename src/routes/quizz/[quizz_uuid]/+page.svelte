@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 
 	let { data } = $props();
+	console.log(data);
 </script>
 
 <section class="grid w-full grid-cols-2 place-items-center items-start">

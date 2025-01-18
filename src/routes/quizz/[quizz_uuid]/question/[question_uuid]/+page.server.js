@@ -1,7 +1,8 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
 import { answers, question_parts, questions, quizzes, sessions } from "$lib/server/db/schema";
-import { getQuestion } from "$lib/server/utils";
+import { getQuestion, getSessionByUUID } from "$lib/server/utils";
+import { fromDate } from "@internationalized/date";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { and, asc, desc, eq, isNull, like, notInArray, param, sql } from "drizzle-orm";
 
@@ -23,12 +24,17 @@ export async function load({ request, params, cookies }) {
 		return error(404);
 	}
 
+	let session = await getSessionByUUID(cookies.get('quizz_session') ?? "");
+	if (!session) {
+		return error(404);
+	}
+
 	let answers_rows = db.select()
 		.from(answers)
 		.where(
 			and(
 				eq(answers.question_uuid, params.question_uuid),
-				eq(answers.session_uuid, cookies.get('quizz_session') ?? "")
+				eq(answers.session_uuid, session.uuid)
 			)
 		)
 		.all();
@@ -44,7 +50,7 @@ export async function load({ request, params, cookies }) {
 	}
 	);
 
-	return { question, parts };
+	return { question, parts, time_left: fromDate(session.created_at, 'UTC').add({ minutes: session.duration_minutes }).toDate().getTime() - Date.now() };
 }
 
 /** @type {import("./$types").Actions} */

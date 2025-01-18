@@ -16,7 +16,7 @@
 	let { data, form } = $props();
 
 	let error_state = $state(false);
-	let quizz_code = $state("");
+	let quizz_code = $state('');
 
 	$effect(() => {
 		if (form?.incorrect) {
@@ -45,7 +45,8 @@
 								required
 								disabled={!data.logged_in}
 								class="w-[100px] shrink rounded-r-none border-0 pr-0 text-center 
-								delay-60 invalid:font-normal invalid:normal-case 
+								delay-60 placeholder:font-normal placeholder:tracking-normal 
+								placeholder:text-neutral-500 invalid:font-normal invalid:normal-case
 								invalid:tracking-normal valid:enabled:font-bold valid:enabled:uppercase valid:enabled:tracking-[0.4em]
 								{error_state ? 'text-red-500' : ''}"
 								placeholder="Quizz code..."

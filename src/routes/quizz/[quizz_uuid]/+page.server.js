@@ -4,7 +4,7 @@ import { db } from "$lib/server/db";
 import { answers, question_parts, questions, questions, questions, quizzes, sessions, users } from "$lib/server/db/schema";
 import { getResults, getUserByUUID } from "$lib/server/utils";
 import { fail, redirect } from "@sveltejs/kit";
-import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull, like } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull, like, lte, or } from "drizzle-orm";
 import { get } from "svelte/store";
 
 /** @type {import("./$types").PageServerLoad} */
@@ -45,15 +45,22 @@ export async function load({ cookies, params }) {
 	).at(0) ?? null;
 
 
-	let past_sessions = await db.select()
+	let past_sessions = (await db.select()
 		.from(sessions)
+		.innerJoin(quizzes, eq(sessions.quizz_uuid, quizzes.uuid))
 		.where(
 			and(
 				eq(sessions.user_uuid, user.uuid),
 				eq(sessions.quizz_uuid, quizz.uuid),
-				eq(sessions.in_progress, 0)
+				eq(sessions.in_progress, 0),
+				or(
+					eq(quizzes.answers_hidden, 0),
+					lte(quizzes.answers_visible_since, new Date()),
+					eq(sessions.published, 1)
+				)
 			)
-		).orderBy(desc(sessions.updated_at));
+		).orderBy(desc(sessions.updated_at))).map(r => r.sessions);
+	console.log(past_sessions)
 
 	let past_results = (await Promise.all(past_sessions.map(async session => await getResults(session.uuid)))).filter(result => result !== null) ?? [];
 
@@ -98,6 +105,7 @@ export let actions = {
 		let session_uuid = crypto.randomUUID();
 		await db.insert(sessions)
 			.values({
+				duration_minutes: quizz.duration_minutes,
 				uuid: session_uuid,
 				quizz_uuid: quizz.uuid,
 				user_uuid: user.uuid,
@@ -126,6 +134,9 @@ export let actions = {
 				question_part_copy: part,
 				answers: null
 			});
+		}
+		if (!values.length) {
+			return fail(400);
 		}
 
 		await db.insert(answers)

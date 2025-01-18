@@ -2,16 +2,27 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
-	import { EyeIcon, ListCheckIcon, ListChecksIcon, TrashIcon, ViewIcon } from 'lucide-svelte';
+	import {
+		EyeIcon,
+		ListCheckIcon,
+		ListChecksIcon,
+		LoaderIcon,
+		SaveIcon,
+		TrashIcon,
+		ViewIcon
+	} from 'lucide-svelte';
 	import * as internationalized from '@internationalized/date';
 	import DatePicker from '$lib/components/ui/date-picker/date-picker.svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { beforeNavigate, goto } from '$app/navigation';
 
 	const MAX_TS = 8640000000000000;
 
-	let { data } = $props();
+	let { data, form } = $props();
+	let initial_state = $state('');
 
 	let public_since = $state(
 		data.quizz.public_since.getTime() !== 0
@@ -20,7 +31,7 @@
 	);
 	let public_until = $state(
 		data.quizz.public_until.getTime() !== MAX_TS
-			? internationalized.fromDate(data.quizz.public_since, 'UTC')
+			? internationalized.fromDate(data.quizz.public_until, 'UTC')
 			: internationalized.now('UTC')
 	);
 
@@ -54,19 +65,125 @@
 				: answers_visible_since.set({ hour: answers_visible_since_hours }).toDate(),
 			duration: duration
 		};
-		setTimeout(() => (basicInfoStringified = JSON.stringify(info)), 1);
+		setTimeout(() => {
+			basicInfoStringified = JSON.stringify(info);
+			if (!initial_state) initial_state = basicInfoStringified;
+		}, 1);
 	});
+
+	beforeNavigate(({ cancel, to }) => {
+		if (unsaved) {
+			if (to) inProgressNavigationURL = to.url;
+			if (!leaveConfirmed) {
+				cancel();
+				confirmLeaveDialogOpen = true;
+			}
+			leaveConfirmed = false;
+		}
+	});
+
+	let processing = $state(false);
+
+	$effect(() => {
+		data;
+		setTimeout(() => {
+			if (inProgressNavigationURL && form?.success) {
+				confirmLeaveDialogOpen = false;
+				goto(inProgressNavigationURL);
+				inProgressNavigationURL = null;
+				return;
+			}
+
+			processing = false;
+			initial_state = basicInfoStringified;
+		});
+	});
+	/**
+	 * @type {HTMLFormElement}
+	 */
+	let basicInfoForm;
 	let basicInfoStringified = $state('');
+	let confirmLeaveDialogOpen = $state(false);
+	/** @type {URL|null} */
+	let inProgressNavigationURL = $state(null);
+	let leaveConfirmed = $state(false);
+	let unsaved = $derived(initial_state !== basicInfoStringified);
 </script>
 
-<section class="mt-8">
-	<p class="mb-2 text-4xl font-bold">Base info</p>
-	<div class="grid grid-cols-1 md:grid-cols-2 mb-4 gap-x-4">
+<AlertDialog.Root bind:open={confirmLeaveDialogOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+			<AlertDialog.Description>
+				This action cannot be undone. This will permanently delete your account and remove your data
+				from our servers.
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<div class="flex w-full items-center justify-between gap-x-2">
+				<Button
+					variant="outline"
+					onclick={() => {
+						confirmLeaveDialogOpen = false;
+						leaveConfirmed = false;
+						inProgressNavigationURL = null;
+					}}>Cancel</Button
+				>
+				<div class="flex items-center gap-x-2">
+					<Button
+						variant="destructive"
+						onclick={() => {
+							confirmLeaveDialogOpen = false;
+							leaveConfirmed = true;
+							if (inProgressNavigationURL) goto(inProgressNavigationURL);
+						}}>Leave</Button
+					>
+					<Button
+						onclick={(e) => {
+							basicInfoForm.requestSubmit();
+							leaveConfirmed = true;
+						}}
+						disabled={!unsaved || processing}
+					>
+						{#if processing}
+							<LoaderIcon class="animate-spin" />
+						{:else}
+							Save and leave
+						{/if}
+					</Button>
+				</div>
+			</div>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
+<section class="mt-4">
+	<div class="mb-2 flex items-center justify-between">
+		<p class="text-4xl font-bold">Base info</p>
+		<form
+			bind:this={basicInfoForm}
+			id="basicInfoForm"
+			onsubmit={() => (processing = true)}
+			method="post"
+			use:enhance
+			action="?/update"
+		>
+			<input name="info" type="hidden" bind:value={basicInfoStringified} />
+			<Button type="submit" disabled={initial_state === basicInfoStringified || processing}>
+				{#if processing}
+					<LoaderIcon class="animate-spin" />
+				{:else}
+					<SaveIcon />
+				{/if}
+			</Button>
+		</form>
+	</div>
+	<div class="mb-4 grid grid-cols-1 gap-x-4 md:grid-cols-2">
 		<div class="flex flex-col gap-y-2">
 			<div>
 				<Label class="">Available since</Label>
 				<div class=" flex items-center gap-x-2">
-					<Checkbox bind:checked={no_public_since} />
+					<Checkbox bind:checked={() => !no_public_since, (val) => (no_public_since = !val)} />
 					<DatePicker bind:value={public_since} disabled={no_public_since} />
 					<Input
 						min="0"
@@ -86,7 +203,7 @@
 			<div>
 				<Label class="">Available until</Label>
 				<div class="flex items-center gap-x-2">
-					<Checkbox bind:checked={no_public_until} />
+					<Checkbox bind:checked={() => !no_public_until, (val) => (no_public_until = !val)} />
 					<DatePicker bind:value={public_until} disabled={no_public_until} />
 					<Input
 						min="0"
@@ -107,6 +224,7 @@
 			<div>
 				<Label for="duration">Duration (minutes)</Label>
 				<Input
+					min="0"
 					class="w-[70px]"
 					id="duration"
 					type="number"
@@ -119,7 +237,10 @@
 			<div>
 				<Label>Answers available since</Label>
 				<div class="flex items-center gap-x-2">
-					<Checkbox bind:checked={no_answers_visible_since} />
+					<Checkbox
+						bind:checked={() => !no_answers_visible_since,
+						(val) => (no_answers_visible_since = !val)}
+					/>
 					<DatePicker bind:value={answers_visible_since} disabled={no_answers_visible_since} />
 					<Input
 						min="0"
@@ -137,10 +258,6 @@
 			</div>
 		</div>
 	</div>
-	<form method="post" use:enhance action="?/update">
-		<input name="info" type="hidden" bind:value={basicInfoStringified} />
-		<Button type="submit">Save</Button>
-	</form>
 </section>
 
 <section class="mt-8">

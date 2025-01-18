@@ -13,15 +13,15 @@
 			data-correct={part.answer_data[i] === part.correct_data.at(i)}
 			class="
 				flex items-center gap-x-2
-				px-4 first:rounded-t-md
+				px-4 py-1
+				first:rounded-t-md
 				last:rounded-b-md
 				data-[review=true]:data-[correct=false]:bg-red-800
-				data-[review=true]:data-[correct=true]:bg-green-800
-				py-1 data-[review=true]:py-2
+				data-[review=true]:data-[correct=true]:bg-green-800 data-[review=true]:py-2
 				"
 		>
-			<Checkbox disabled={review} bind:checked={part.answer_data[i]} id="checkbox-{i}" /><Label
-				>{part.question_data[i]}</Label
+			<Checkbox disabled={review} bind:checked={part.answer_data[i]} id="{part.uuid}-checkbox-{i}" /><Label
+				for="{part.uuid}-checkbox-{i}">{part.question_data[i]}</Label
 			>
 		</div>
 	{/each}

@@ -1,7 +1,8 @@
 import { db } from "$lib/server/db";
-import { quizzes, sessions } from "$lib/server/db/schema";
+import { question_parts, question_parts, questions, quizzes, sessions } from "$lib/server/db/schema";
+import { getPartsOfQuestion } from "$lib/server/utils";
 import { fail, redirect } from "@sveltejs/kit";
-import { and, between, gte, like, lte } from "drizzle-orm";
+import { and, between, eq, gte, like, lte } from "drizzle-orm";
 
 
 
@@ -28,6 +29,16 @@ export let actions = {
 		if (!quizz) {
 			return fail(404, { quizz_uuid, incorrect: true });
 		}
+
+		let question_parts_rows = await db.select()
+			.from(questions)
+			.innerJoin(question_parts, eq(questions.uuid, question_parts.question_uuid))
+			.where(eq(questions.quizz_uuid, quizz.uuid))
+
+		if (!question_parts_rows.length) {
+			return fail(404, { quizz_uuid, incorrect: true });
+		}
+
 
 		return redirect(302, '/quizz/' + quizz_uuid);
 

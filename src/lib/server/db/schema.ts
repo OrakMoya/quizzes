@@ -1,9 +1,9 @@
-import { sql } from 'drizzle-orm';
+import { isNotNull, sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 
 const timestamps = {
-	created_at: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
-	updated_at: integer('updated_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
+	created_at: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
+	updated_at: integer('updated_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
 };
 
 const uuids = {
@@ -75,6 +75,7 @@ export const questions = sqliteTable('questions', {
 
 export const sessions = sqliteTable('sessions', {
 	...uuids,
+	duration_minutes: integer('duration_minutes').notNull(),
 	user_uuid: text('user_uuid', { mode: 'text' })
 		.references(() => users.uuid, { onDelete: 'set null' })
 		.notNull(),
