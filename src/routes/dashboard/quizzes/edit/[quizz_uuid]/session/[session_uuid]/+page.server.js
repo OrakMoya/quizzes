@@ -20,7 +20,7 @@ export async function load({ params, cookies }) {
 	}
 
 	let answer_rows = (await getAnswersOfSessionByUUID(session.uuid))
-		.toSorted((a, b) => a.question_copy.position - b.question_copy.position);
+		.sort((a, b) => a.question_copy.position - b.question_copy.position);
 	if (answer_rows == null) {
 		throw Error("Something went wrong");
 	}

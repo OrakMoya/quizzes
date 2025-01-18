@@ -144,7 +144,8 @@ export let actions = {
 
 		let first_question = values
 			.map(value => value.question_copy)
-			.toSorted((a, b) => a.position - b.position)[0];
+			.sort((a, b) => a.position - b.position)[0];
+		
 
 
 		cookies.set('quizz_session', session_uuid, { path: '/' });

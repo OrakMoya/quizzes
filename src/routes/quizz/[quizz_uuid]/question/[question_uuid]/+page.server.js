@@ -125,7 +125,7 @@ export let actions = {
 			.filter(q => q.question_copy.position > current_question_position);
 
 		let next = all_questions
-			.toSorted((a, b) => a.question_copy.position - b.question_copy.position)
+			.sort((a, b) => a.question_copy.position - b.question_copy.position)
 			.at(0);
 
 		if (next) {
@@ -209,7 +209,7 @@ export let actions = {
 			.filter(q => q.question_copy.position < current_question_position);
 
 		let next = all_questions
-			.toSorted((a, b) => b.question_copy.position - a.question_copy.position)
+			.sort((a, b) => b.question_copy.position - a.question_copy.position)
 			.at(0);
 
 		if (next) {
