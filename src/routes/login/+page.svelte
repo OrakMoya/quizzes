@@ -28,7 +28,7 @@
 					</div>
 				</form>
 			</div>
-			<div class="flex flex-col items-end px-8">
+			<div class="flex-col items-end px-8 hidden md:flex">
 				<span class="text-5xl font-bold mb-4">Log in</span>
 				<span class="text-neutral-500 text-sm text-right w-[200px]">Don't worry, we've <span class="italic">never</span> been compromised
 					<div class="inline relative text-xs bottom-1">*</div>

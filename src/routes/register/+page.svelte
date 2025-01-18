@@ -74,7 +74,7 @@
 					</div>
 				</form>
 			</div>
-			<div class="flex flex-col items-end px-8">
+			<div class="hidden md:flex flex-col items-end px-8">
 				<span class="mb-4 text-5xl font-bold">Sign up</span>
 				<span class="w-[200px] text-right text-sm text-neutral-500"
 					>Don't worry, we've <span class="italic">never</span> been compromised
