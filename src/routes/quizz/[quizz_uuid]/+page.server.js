@@ -60,7 +60,6 @@ export async function load({ cookies, params }) {
 				)
 			)
 		).orderBy(desc(sessions.updated_at))).map(r => r.sessions);
-	console.log(past_sessions)
 
 	let past_results = (await Promise.all(past_sessions.map(async session => await getResults(session.uuid)))).filter(result => result !== null) ?? [];
 

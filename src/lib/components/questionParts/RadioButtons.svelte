@@ -28,9 +28,7 @@
 					bind:value={() => part.question_data[i],
 					(value) => {
 						if (part.correct_data === `${i}-${part.question_data[i]}`) {
-							console.log(part.correct_data);
 							part.correct_data = `${i}-${value}`;
-							console.log(part.correct_data);
 						}
 						part.question_data[i] = value;
 					}}

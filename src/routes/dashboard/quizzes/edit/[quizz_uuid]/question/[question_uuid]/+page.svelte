@@ -82,7 +82,6 @@
 
 	$effect(() => {
 		data;
-		console.log('effect');
 		setTimeout(() => {
 			if (inProgressNavigationURL && form?.success) {
 				confirmLeaveDialogOpen = false;

@@ -4,7 +4,6 @@
 
 	let { part = $bindable(), review = false } = $props();
 	if (!review) part.answer_data = '';
-	console.log(part);
 </script>
 
 <div>

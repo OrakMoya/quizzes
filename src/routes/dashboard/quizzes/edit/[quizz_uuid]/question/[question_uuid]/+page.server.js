@@ -100,7 +100,6 @@ export const actions = {
 		await Promise.all(
 			question_rows.map(
 				async (q, i) => {
-					console.log(i);
 					await db.update(questions)
 						.set({ position: i + 1 })
 						.where(eq(questions.uuid, q.uuid))

@@ -8,9 +8,6 @@
 
 	let password = $state('');
 	let password_confirmation = $state('');
-	$effect(() => {
-		console.log(form);
-	});
 </script>
 
 <div class="px-8 py-4">
