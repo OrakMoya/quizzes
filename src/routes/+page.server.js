@@ -1,5 +1,5 @@
 import { db } from "$lib/server/db";
-import { question_parts, question_parts, questions, quizzes, sessions } from "$lib/server/db/schema";
+import { question_parts, questions, quizzes, sessions } from "$lib/server/db/schema";
 import { getPartsOfQuestion } from "$lib/server/utils";
 import { fail, redirect } from "@sveltejs/kit";
 import { and, between, eq, gte, like, lte } from "drizzle-orm";
