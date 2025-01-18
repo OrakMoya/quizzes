@@ -27,7 +27,7 @@
 			{#each data.questions as question}
 				<div
 					data-focused={page.url.pathname.endsWith(question.uuid)}
-					class="group flex w-fit items-center justify-start border-x border-neutral-600 border-opacity-0 first:border-l-0 last:border-r-0 data-[focused=true]:border-opacity-100"
+					class="group flex w-fit items-center justify-start border-x border-neutral-600 border-opacity-0 first:border-l-0 data-[focused=true]:border-opacity-100 last:border-r-0"
 				>
 					<a
 						id="question-{question.uuid}"
@@ -43,11 +43,11 @@
 				<p class="p-2 py-4 text-sm text-neutral-500">No questions yet...</p>
 			{/if}
 		</div>
-		<div class="flex items-center gap-x-4 justify-between w-full md:w-fit">
+		<div class="flex w-full items-center justify-between gap-x-4 md:w-fit">
 			<a
-				class="w-fit whitespace-nowrap rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-4 data-[focused=true]:bg-background"
+				class="w-fit whitespace-nowrap rounded-md border border-neutral-700 bg-neutral-800 px-6 py-2 data-[focused=true]:bg-background"
 				data-focused={page.url.pathname.endsWith(page.params.quizz_uuid)}
-				href="/dashboard/quizzes/edit/{page.params.quizz_uuid}">Results</a
+				href="/dashboard/quizzes/edit/{page.params.quizz_uuid}">Info</a
 			>
 			<div class="flex items-center gap-x-2">
 				<form

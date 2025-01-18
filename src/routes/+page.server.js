@@ -1,7 +1,7 @@
 import { db } from "$lib/server/db";
 import { quizzes, sessions } from "$lib/server/db/schema";
 import { fail, redirect } from "@sveltejs/kit";
-import { like } from "drizzle-orm";
+import { and, between, gte, like, lte } from "drizzle-orm";
 
 
 
@@ -16,11 +16,17 @@ export let actions = {
 
 		let quizz = (await db.select()
 			.from(quizzes)
-			.where(like(quizzes.uuid, quizz_uuid + "%"))
+			.where(
+				and(
+					like(quizzes.uuid, quizz_uuid + "%"),
+					lte(quizzes.public_since, new Date()),
+					gte(quizzes.public_until, new Date())
+				)
+			)
 			.limit(1)).at(0);
 
 		if (!quizz) {
-			return fail(404, {quizz_uuid, incorrect: true});
+			return fail(404, { quizz_uuid, incorrect: true });
 		}
 
 		return redirect(302, '/quizz/' + quizz_uuid);

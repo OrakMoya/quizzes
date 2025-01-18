@@ -1,6 +1,4 @@
-import { json } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
-import { boolean } from 'drizzle-orm/mysql-core';
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 
 const timestamps = {
@@ -14,8 +12,8 @@ const uuids = {
 
 export const users = sqliteTable('users', {
 	...uuids,
-	first_name: text('first_name', {mode: 'text'}),
-	last_name: text('last_name', {mode: 'text'}),
+	first_name: text('first_name', { mode: 'text' }),
+	last_name: text('last_name', { mode: 'text' }),
 	username: text('username', { mode: 'text' }).notNull(),
 	email: text('email', { mode: 'text' }).notNull(),
 	password: text('password', { mode: 'text' }).notNull(),
@@ -46,7 +44,21 @@ export const quizzes = sqliteTable('quizzes', {
 		.notNull(),
 	group_uuid: text('group_uuid', { mode: 'text' })
 		.references(() => groups.uuid, { onDelete: 'set null' }),
-	version: integer('version').default(1),
+	public_since: integer('public_since', { mode: 'timestamp' })
+		.default(new Date(0))
+		.notNull(),
+	public_until: integer('public_until', { mode: 'timestamp' })
+		.default(new Date(8640000000000000))
+		.notNull(),
+	answers_hidden: integer('answers_hidden')
+		.default(1)
+		.notNull(),
+	answers_visible_since: integer('answers_visible_since', { mode: 'timestamp' })
+		.default(new Date(8640000000000000))
+		.notNull(),
+	duration_minutes: integer('duration_minutes')
+		.default(30)
+		.notNull(),
 	...timestamps
 })
 
@@ -64,12 +76,17 @@ export const questions = sqliteTable('questions', {
 export const sessions = sqliteTable('sessions', {
 	...uuids,
 	user_uuid: text('user_uuid', { mode: 'text' })
-		.references(() => users.uuid)
+		.references(() => users.uuid, { onDelete: 'set null' })
 		.notNull(),
 	quizz_uuid: text('quizz_uuid', { mode: 'text' })
-		.references(() => quizzes.uuid, {onDelete: 'cascade'})
+		.references(() => quizzes.uuid, { onDelete: 'cascade' })
 		.notNull(),
-	in_progress: integer('in_progress').default(0),
+	in_progress: integer('in_progress')
+		.default(0)
+		.notNull(),
+	published: integer('published')
+		.default(0)
+		.notNull(),
 	...timestamps
 })
 
@@ -80,17 +97,17 @@ export const answers = sqliteTable('answers', {
 	question_part_uuid: text('question_part_uuid', { mode: 'text' })
 		.notNull(),
 	user_uuid: text('user_uuid', { mode: 'text' })
-		.references(() => users.uuid, {onDelete: 'cascade'})
+		.references(() => users.uuid, { onDelete: 'cascade' })
 		.notNull(),
 	question_copy: text('question_copy', { mode: 'json' })
 		.$type<typeof questions.$inferInsert>()
 		.notNull(),
-	question_part_copy: text('question_part_copy', {mode:'json'})
+	question_part_copy: text('question_part_copy', { mode: 'json' })
 		.$type<typeof question_parts.$inferInsert>()
 		.notNull(),
 	answers: text('answers', { mode: 'json' }).$type<any>(),
 	session_uuid: text('session_uuid', { mode: 'text' })
-		.references(() => sessions.uuid, {onDelete: 'cascade'})
+		.references(() => sessions.uuid, { onDelete: 'cascade' })
 		.notNull(),
 	...timestamps
 })

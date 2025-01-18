@@ -4,6 +4,7 @@ import { answers, questions, quizzes, sessions, users } from "$lib/server/db/sch
 import { getResults, getQuizzByShortUUID, getSessionsOfQuizz, getUserByUUID, getSessionByUUID, getQuestion, getFinishedSessionsOfQuizz } from "$lib/server/utils";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { eq, max, param } from "drizzle-orm";
+import { parse } from "svelte/compiler";
 
 
 /** @type {import("./$types").PageServerLoad} */
@@ -118,4 +119,53 @@ export const actions = {
 
 		return { success: true };
 	},
+	update: async ({ request, cookies, params }) => {
+		let user = await getCurrentUser(cookies);
+		if (!user) {
+			return fail(403);
+		}
+
+		let quizz = await getQuizzByShortUUID(params.quizz_uuid);
+		if (!quizz) {
+			return fail(404);
+		}
+
+		if (quizz.owner_uuid !== user.uuid) {
+			return fail(403);
+		}
+
+		let formData = await request.formData();
+		let stringified = formData.get('info');
+		if (!stringified) {
+			return fail(400);
+		}
+
+		/** @type {{public_since: string; public_until: string; answers_visible_since: string; duration: number}} */
+		let parsed = JSON.parse(stringified.toString());
+
+		try {
+			/** @type {{public_since: Date; public_until: Date; answers_visible_since: Date; duration: number}} */
+			let info = {
+				public_since: new Date(parsed.public_since),
+				public_until: new Date(parsed.public_until),
+				answers_visible_since: new Date(parsed.answers_visible_since),
+				duration: Number(parsed.duration)
+			}
+
+			await db.update(quizzes)
+				.set(
+					{
+						duration_minutes: info.duration,
+						public_since: info.public_since,
+						public_until: info.public_until,
+						answers_visible_since: info.answers_visible_since,
+					}
+				);
+
+
+			return { success: true };
+		} catch {
+			return fail(400);
+		}
+	}
 }
