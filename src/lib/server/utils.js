@@ -103,6 +103,14 @@ export async function getQuizzByShortUUID(short_uuid) {
 		).limit(1)).at(0)
 }
 
+/**
+ * @param {string} message
+ * @returns {never}
+ */
+export function throwExpression(message){
+	throw message;
+}
+
 
 /**
  * @param {string} uuid
@@ -155,3 +163,4 @@ export async function getAnswersOfSessionByUUID(uuid) {
 	return await db.select().from(answers)
 		.where(eq(answers.session_uuid, uuid));
 }
+
