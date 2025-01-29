@@ -17,7 +17,7 @@ export const users = sqliteTable('users', {
 	username: text('username', { mode: 'text' }).notNull(),
 	email: text('email', { mode: 'text' }).notNull(),
 	password: text('password', { mode: 'text' }).notNull(),
-	role: text('role', { enum: ['admin', 'user', 'guest'] }).notNull(),
+	role: text('role', { enum: ['owner','admin', 'user', 'guest'] }).notNull(),
 	...timestamps
 });
 

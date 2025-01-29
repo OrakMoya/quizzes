@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/state';
 
-	let { href, preload = '', children, ...rest } = $props();
+	let { href, rel='', preload = '', children, ...rest } = $props();
 	let current = $derived(page.url.pathname == href);
 </script>
 
@@ -9,6 +9,7 @@
 	{href}
 	data-sveltekit-preload-data={preload}
 	data-current={current}
+	{rel}
 	class="data group w-fit flex flex-col text-base data-[current=true]:font-semibold sm:text-lg md:text-xl {rest.class} transition-all duration-100"
 >
 	{@render children()}

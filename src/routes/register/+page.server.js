@@ -3,7 +3,7 @@ import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
 import { fail, redirect } from '@sveltejs/kit';
 import * as bcrypt from "bcrypt";
-import { eq } from 'drizzle-orm';
+import { count, eq, isNull } from 'drizzle-orm';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ cookies }) {
@@ -50,12 +50,15 @@ export const actions = {
 
 		let salt = await bcrypt.genSalt(10);
 		let pwd_hash = await bcrypt.hash(exploded.password.toString(), salt);
+		let {user_count} = (await db.select({
+			user_count: count()
+		}).from(users))[0];
 
 		await db.insert(users).values({
 			uuid: crypto.randomUUID(),
 			username: exploded.username?.toString(),
 			email: exploded.email?.toString(),
-			role: 'user',
+			role: !user_count ? 'owner' : 'user',
 			password: pwd_hash
 		});
 

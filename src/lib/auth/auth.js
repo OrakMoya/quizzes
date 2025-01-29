@@ -10,7 +10,7 @@ import { APP_SECRET } from "$env/static/private";
  * @param {import("@sveltejs/kit").Cookies} cookies
  * @returns {Promise<typeof users.$inferInsert | null>} 
  */
-export async function getCurrentUser(cookies) {
+export async function getCurrentUser(cookies, password = true) {
 	let token = cookies.get('token');
 
 	/**
@@ -38,7 +38,15 @@ export async function getCurrentUser(cookies) {
 			cookies.set('token', token, { path: '/' });
 		}
 	}
-	return rows.at(0) ?? null;
+	let user = rows.at(0);
+	if (user) {
+		if (!password) {
+			user.password = "";
+		}
+
+		return user
+	}
+	return null;
 }
 
 /**

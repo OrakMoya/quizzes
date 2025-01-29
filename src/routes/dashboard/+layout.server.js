@@ -1,7 +1,8 @@
+import { getCurrentUser } from '$lib/auth/auth';
 
-/** @type {import('./dashboard/$types').LayoutServerLoad} */
-export function load({ cookies }) {
+/** @type {import('./$types').LayoutServerLoad} */
+export async function load({ cookies }) {
 	return {
-		logged_in: cookies.get('token') ? true : false
+		user: await getCurrentUser(cookies, false)
 	}
 }

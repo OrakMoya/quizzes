@@ -81,13 +81,13 @@
 	</div>
 
 	<div class="my-4 grid grid-cols-1 gap-x-4 gap-y-2 text-center md:grid-cols-3">
-		<p class="content-center rounded-md border border-neutral-800 bg-black px-4 py-2 text-sm">
+		<p class="content-center rounded-md border border-neutral-800 bg-neutral-950 px-4 py-2 text-sm">
 			A quizz must have at least one question with one question part.
 		</p>
-		<p class="content-center rounded-md border border-neutral-800 bg-black px-4 py-2 text-sm">
+		<p class="content-center rounded-md border border-neutral-800 bg-neutral-950 px-4 py-2 text-sm">
 			Questions without any parts are skipped.
 		</p>
-		<p class="content-center rounded-md border border-neutral-800 bg-black px-4 py-2 text-sm">
+		<p class="content-center rounded-md border border-neutral-800 bg-neutral-950 px-4 py-2 text-sm">
 			Both the question and it's parts can have text.
 		</p>
 	</div>

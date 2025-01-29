@@ -14,7 +14,7 @@
 	<div class="mx-auto mt-28 max-w-screen-lg">
 		<div class="flex justify-around">
 			<div class="rounded-md border border-accent bg-background/50 px-6 py-6">
-				<form method="post" class="group flex w-fit flex-col" use:enhance>
+				<form onsubmit={()=>form=null} method="post" class="group flex w-fit flex-col" use:enhance>
 					<Label class="mb-1" for="username">Username</Label>
 					<Input required class="mb-1" type="text" id="username" name="username" />
 					{#if form?.username_missing }

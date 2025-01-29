@@ -5,8 +5,8 @@
 	let { data } = $props();
 </script>
 
-<section class="grid w-full grid-cols-1 gap-x-4 gap-y-16 md:grid-cols-2 md:place-items-center items-start">
-	<div class="">
+<section class="grid w-full grid-cols-1 gap-x-4 gap-y-16 md:grid-cols-2 md:place-items-center ">
+	<div class="h-full">
 		{#if data.quizz}
 			<p class="mb-2 text-6xl font-bold">
 				{data.quizz.title}
@@ -25,11 +25,11 @@
 			</form>
 		</div>
 	</div>
-	<div>
-		<p class="w-full md:text-center text-neutral-500">Past results</p>
+	<div class="w-fit mx-auto">
+		<p class="md:w-full text-center text-neutral-500">Past results</p>
 		{#if data.past_results}
 			{#each data.past_results as past_result}
-				<div class="mb-2 grid grid-cols-2 items-center gap-x-2">
+				<div class="mb-2 grid grid-cols-2 items-center gap-x-2 w-full">
 					<span class="w-full text-right text-lg font-bold"
 						>{Math.floor((past_result.achieved / past_result.total) * 100)}%</span
 					>

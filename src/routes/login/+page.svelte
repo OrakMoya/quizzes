@@ -12,7 +12,7 @@
 	<div class="mx-auto mt-28 max-w-screen-lg">
 		<div class="flex justify-around">
 			<div class="bg-background/50 px-6 py-6 rounded-md border border-accent">
-				<form method="post" class="flex w-fit flex-col group" use:enhance>
+				<form onsubmit={()=>form=null} method="post" class="flex w-fit flex-col group" use:enhance>
 					<Label class="mb-1" for="email">Email</Label>
 					<Input required class="mb-4" type="email" id="email" name="email" />
 

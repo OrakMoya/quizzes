@@ -6,7 +6,7 @@
 
 <header class="px-8 py-6 bg-black">
 	<div class="mx-auto max-w-screen-lg">
-		<UnderlinedLink href="/">Home</UnderlinedLink>
+		<UnderlinedLink href="/">Quizzes</UnderlinedLink>
 	</div>
 </header>
 
