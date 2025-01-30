@@ -110,6 +110,10 @@
 	let unsaved = $derived(initial_state !== basicInfoStringified);
 </script>
 
+<svelte:head>
+	<title>{data.quizz.title} - Quizzes</title>
+</svelte:head>
+
 <AlertDialog.Root bind:open={confirmLeaveDialogOpen}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>

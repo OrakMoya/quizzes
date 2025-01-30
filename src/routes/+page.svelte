@@ -26,6 +26,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Quizzes</title>
+</svelte:head>
+
 <main
 	class="min-w-screen h-screen min-h-screen w-screen overflow-clip bg-neutral-900 px-16 text-white"
 >

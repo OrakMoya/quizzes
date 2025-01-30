@@ -1,10 +1,14 @@
 <script>
 	import UnderlinedLink from '../../dashboard/UnderlinedLink.svelte';
 
-	let { children } = $props();
+	let { children, data } = $props();
 </script>
 
-<header class="px-8 py-6 bg-black">
+<svelte:head>
+	<title>{data.quizz?.title} - Quizzes</title>
+</svelte:head>
+
+<header class="bg-black px-8 py-6">
 	<div class="mx-auto max-w-screen-lg">
 		<UnderlinedLink href="/">Quizzes</UnderlinedLink>
 	</div>

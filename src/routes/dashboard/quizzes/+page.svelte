@@ -28,6 +28,10 @@
 	let recentlyCopiedUUID = $state('');
 </script>
 
+<svelte:head>
+	<title>Your quizzes - Quizzes</title>
+</svelte:head>
+
 <div class="mx-auto max-w-screen-lg">
 	<Dialog.Root bind:open={new_quizz_dialog_open}>
 		<Dialog.Trigger>

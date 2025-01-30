@@ -11,6 +11,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Admin - Quizzes</title>
+</svelte:head>
+
 <main class="max-w-screen-lg mx-auto">
 	<div class="mb-4 grid grid-cols-1 gap-x-4 gap-y-2 text-center">
 		<p class="content-center rounded-md border border-neutral-800 bg-neutral-950 px-4 py-2 text-sm">

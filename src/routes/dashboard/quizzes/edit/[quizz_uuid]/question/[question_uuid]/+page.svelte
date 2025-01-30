@@ -108,6 +108,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{question.question} - Quizzes</title>
+</svelte:head>
+
 <AlertDialog.Root bind:open={confirmLeaveDialogOpen}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>

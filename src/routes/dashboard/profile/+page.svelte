@@ -24,6 +24,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Profile - Quizzes</title>
+</svelte:head>
+
 <main class="mx-auto max-w-screen-lg">
 	<div class="float-left mr-6 rounded-md border border-neutral-800 bg-neutral-950 p-4">
 		<h1 class="mb-2 text-2xl font-bold">Profile</h1>

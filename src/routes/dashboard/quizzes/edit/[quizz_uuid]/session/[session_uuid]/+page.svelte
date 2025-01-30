@@ -24,13 +24,19 @@
 	});
 </script>
 
+<svelte:head>
+	<title>
+		{data.user?.username ?? '[deleted]'}'s session - Quizzes
+	</title>
+</svelte:head>
+
 <div>
 	<div class="mb-2 mt-4 text-neutral-500">
 		Session by {data.user?.username ?? '[deleted]'}
 	</div>
 	<div class="w-full">
 		{#each by_question as QnA, i}
-			<div class="pb-8 pt-6 mb-4">
+			<div class="mb-4 pb-8 pt-6">
 				<p class="mb-2 text-2xl font-bold">
 					{QnA.question.position}: {QnA.question.question}
 				</p>
