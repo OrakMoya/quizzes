@@ -40,15 +40,15 @@
 	});
 </script>
 
-<div class="w-full">
+<div class="w-full pt-32">
 	<p class="mb-6 text-3xl font-bold">
 		<span class="mr-2 text-neutral-500">{question.position}:</span>
 		{question.question}
 	</p>
 	{#key parts}
-		<div class="grid grid-cols-1 gap-2 md:grid-cols-2">
-			{#each parts as part, i}
-				<div class="mb-8">
+		<div class="grid grid-cols-1 gap-2">
+			{#each parts as _, i}
+				<div class="mb-8 bg-neutral-950 px-4 py-4 rounded-md border border-neutral-800">
 					<Decider bind:part={parts[i]} />
 				</div>
 			{/each}

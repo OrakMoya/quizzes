@@ -35,6 +35,7 @@
 			: internationalized.now('UTC')
 	);
 
+	let title = $state(data.quizz.title);
 	let no_public_since = $state(data.quizz.public_since.getTime() === 0);
 	let no_public_until = $state(data.quizz.public_until.getTime() === MAX_TS);
 
@@ -63,7 +64,8 @@
 			answers_visible_since: no_answers_visible_since
 				? new Date(MAX_TS)
 				: answers_visible_since.set({ hour: answers_visible_since_hours }).toDate(),
-			duration: duration
+			duration: duration,
+			title: title
 		};
 		setTimeout(() => {
 			basicInfoStringified = JSON.stringify(info);
@@ -86,6 +88,7 @@
 
 	$effect(() => {
 		data;
+		form;
 		setTimeout(() => {
 			if (inProgressNavigationURL && form?.success) {
 				confirmLeaveDialogOpen = false;
@@ -95,7 +98,7 @@
 			}
 
 			processing = false;
-			initial_state = basicInfoStringified;
+			if (form?.success) initial_state = basicInfoStringified;
 		});
 	});
 	/**
@@ -182,9 +185,21 @@
 			</Button>
 		</form>
 	</div>
+	<div>
+		<Label for="title">Title</Label>
+		<Input
+			required
+			class="sm:w-1/2 md:w-1/3"
+			id="title"
+			type="text"
+			min="0"
+			max="100"
+			bind:value={title}
+		/>
+	</div>
 	<div class="mb-4 grid grid-cols-1 gap-x-4 md:grid-cols-2">
-		<div class="flex flex-col gap-y-2">
-			<div>
+		<div class="flex flex-col gap-y-4">
+			<div data-disabled={no_public_since} class="group">
 				<Label class="">Available since</Label>
 				<div class=" flex items-center gap-x-2">
 					<Checkbox bind:checked={() => !no_public_since, (val) => (no_public_since = !val)} />
@@ -196,15 +211,12 @@
 						type="number"
 						bind:value={public_since_hours}
 						disabled={no_public_since}
-						oninput={() => {
-							if (public_since_hours > 23) public_since_hours = 23;
-							if (public_since_hours < 0) public_since_hours = 0;
-						}}
 					/>
+					<span class="text-lg group-data-[disabled=true]:text-neutral-500">h</span>
 				</div>
 			</div>
 
-			<div>
+			<div data-disabled={no_public_until} class="group">
 				<Label class="">Available until</Label>
 				<div class="flex items-center gap-x-2">
 					<Checkbox bind:checked={() => !no_public_until, (val) => (no_public_until = !val)} />
@@ -216,29 +228,17 @@
 						type="number"
 						bind:value={public_until_hours}
 						disabled={no_public_until}
-						oninput={() => {
-							if (public_until_hours > 23) public_until_hours = 23;
-							if (public_until_hours < 0) public_until_hours = 0;
-						}}
 					/>
+					<span class="text-lg group-data-[disabled=true]:text-neutral-500">h</span>
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-col gap-y-2">
+		<div class="flex flex-col gap-y-4">
 			<div>
 				<Label for="duration">Duration (minutes)</Label>
-				<Input
-					min="0"
-					class="w-[70px]"
-					id="duration"
-					type="number"
-					bind:value={duration}
-					oninput={() => {
-						if (duration < 0) duration = 0;
-					}}
-				/>
+				<Input min="2" class="w-[70px]" id="duration" type="number" bind:value={duration} />
 			</div>
-			<div>
+			<div data-disabled={no_answers_visible_since} class="group">
 				<Label>Answers available since</Label>
 				<div class="flex items-center gap-x-2">
 					<Checkbox
@@ -253,11 +253,8 @@
 						type="number"
 						bind:value={answers_visible_since_hours}
 						disabled={no_answers_visible_since}
-						oninput={() => {
-							if (answers_visible_since_hours > 23) answers_visible_since_hours = 23;
-							if (answers_visible_since_hours < 0) answers_visible_since_hours = 0;
-						}}
 					/>
+					<span class="text-lg group-data-[disabled=true]:text-neutral-500">h</span>
 				</div>
 			</div>
 		</div>
@@ -267,11 +264,10 @@
 <section class="mt-8">
 	<p class="mb-4 text-3xl font-bold">Results</p>
 	{#if data.sessions.length}
-		<!-- content here -->
 		<ul>
 			{#each data.sessions as session}
 				<li
-					class=" grid grid-cols-4 content-center items-center rounded-md px-4 py-4 md:py-2 text-center text-lg odd:bg-black/40 md:grid-cols-5 gap-2"
+					class=" grid grid-cols-4 content-center items-center gap-2 rounded-md px-4 py-4 text-center text-lg odd:bg-black/40 md:grid-cols-5 md:py-2"
 				>
 					<span>{session.user.username}</span>
 					<span>{Math.floor(session.result.achieved * 100) / 100}</span>
@@ -280,7 +276,7 @@
 						>{(Math.floor((session.result.achieved / session.result.total) * 100) / 100) *
 							100}%</span
 					>
-					<div class="flex w-full md:items-center md:justify-end gap-x-2">
+					<div class="flex w-full gap-x-2 md:items-center md:justify-end">
 						<a href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/session/{session.uuid}">
 							<Button><ListChecksIcon /></Button>
 						</a>

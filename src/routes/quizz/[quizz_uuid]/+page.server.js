@@ -61,7 +61,12 @@ export async function load({ cookies, params }) {
 			)
 		).orderBy(desc(sessions.updated_at))).map(r => r.sessions);
 
-	let past_results = (await Promise.all(past_sessions.map(async session => await getResults(session.uuid)))).filter(result => result !== null) ?? [];
+	let past_results = (
+		await Promise.all(
+			past_sessions.map(
+				async session => await getResults(session.uuid))
+		)
+	).filter(result => result !== null) ?? [];
 
 	let author = await getUserByUUID(quizz.owner_uuid);
 
@@ -144,7 +149,7 @@ export let actions = {
 		let first_question = values
 			.map(value => value.question_copy)
 			.sort((a, b) => a.position - b.position)[0];
-		
+
 
 
 		cookies.set('quizz_session', session_uuid, { path: '/' });

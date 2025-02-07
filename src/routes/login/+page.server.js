@@ -16,7 +16,9 @@ export const actions = {
 		let exploded = {
 			email: data.get('email'),
 			password: data.get('password'),
+			remember: data.get('remember_me'),
 		};
+
 		if (!exploded.email || !exploded.password) {
 			return fail(403, { incorrect: true });
 		}
@@ -24,7 +26,13 @@ export const actions = {
 		let token = "";
 
 		try {
-			token = await attemptLogin({ email: exploded.email.toString(), password: exploded.password.toString() })
+			token = await attemptLogin(
+				{
+					email: exploded.email.toString(),
+					password: exploded.password.toString(),
+					remember: exploded.remember?.toString() == 'on' ? true : false
+				}
+			);
 		} catch {
 			return fail(403, { incorrect: true });
 		}

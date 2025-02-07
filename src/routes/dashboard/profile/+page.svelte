@@ -15,7 +15,6 @@
 	let newPasswordConfirmation = $state('');
 
 	$effect(() => {
-		console.log(data);
 		data;
 		setTimeout(() => {
 			user = data.user;
@@ -78,7 +77,7 @@
 	<div class="w-auto">
 		<div class="">
 			{#each results as result}
-				<div class="mb-1 grid grid-cols-3 place-items-center text-lg justify-between rounded-md px-2 py-1 odd:bg-neutral-800">
+				<a href="/quizz/{result.quizz.uuid.substring(0, 5)}" class="mb-1 grid grid-cols-3 place-items-center text-lg justify-between rounded-md px-2 py-1 odd:bg-neutral-800">
 					<div class="font-bold">{result.quizz.title}</div>
 					<div class="flex items-center">
 						<div>{result.results.achieved}</div>
@@ -88,7 +87,7 @@
 					<div>
 						{Math.floor((result.results.achieved / result.results.total) * 100 * 100) / 100}%
 					</div>
-				</div>
+				</a>
 			{/each}
 		</div>
 	</div>

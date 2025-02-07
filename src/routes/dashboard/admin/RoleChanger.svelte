@@ -36,7 +36,7 @@
 	});
 </script>
 
-<AlertDialog.Root bind:open={alertDialogOpen}>
+<AlertDialog.Root bind:open={alertDialogOpen} onOpenChange={() => (selectedRole = user.role)}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title>Are you sure?</AlertDialog.Title>
@@ -45,12 +45,7 @@
 
 		<AlertDialog.Footer>
 			<AlertDialog.Action onclick={() => form.requestSubmit()}>Change my role</AlertDialog.Action>
-			<AlertDialog.Cancel
-				onclick={() => {
-					alertDialogOpen = false;
-					selectedRole = user.role;
-				}}>Cancel</AlertDialog.Cancel
-			>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

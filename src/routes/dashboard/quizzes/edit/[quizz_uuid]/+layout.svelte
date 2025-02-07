@@ -27,7 +27,7 @@
 			{#each data.questions as question}
 				<div
 					data-focused={page.url.pathname.endsWith(question.uuid)}
-					class="group flex w-fit items-center justify-start border-x border-neutral-600 border-opacity-0 first:border-l-0 data-[focused=true]:border-opacity-100 last:border-r-0"
+					class="group flex w-fit items-center justify-start border-x border-neutral-600 border-opacity-0 first:border-l-0 last:border-r-0 data-[focused=true]:border-opacity-100"
 				>
 					<a
 						id="question-{question.uuid}"
@@ -61,7 +61,7 @@
 					onclick={() => {
 						navigator.clipboard.writeText(data.quizz.uuid.substring(0, 5));
 						codeRecentlyCopied = true;
-						setTimeout(() => (codeRecentlyCopied = false), 2000);
+						setTimeout(() => (codeRecentlyCopied = false),  2000);
 					}}
 				>
 					<div class="relative size-4">
@@ -91,6 +91,9 @@
 			Both the question and it's parts can have text.
 		</p>
 	</div>
+	{#if data.empty_questions}
+		<div class="w-full px-4 py-2 rounded-md border border-red-900 bg-red-950">The quizz has empty questions. <a class="underline" data-sveltekit-preload-data="off" data-sveltekit-reload href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/cleanup">Clean up</a></div>
+	{/if}
 
 	{@render children()}
 </div>

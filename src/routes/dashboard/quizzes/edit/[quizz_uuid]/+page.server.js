@@ -1,9 +1,9 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
-import { answers, questions, quizzes, sessions, users } from "$lib/server/db/schema";
+import { answers, question_parts, questions, quizzes, sessions, users } from "$lib/server/db/schema";
 import { getResults, getQuizzByShortUUID, getSessionsOfQuizz, getUserByUUID, getSessionByUUID, getQuestion, getFinishedSessionsOfQuizz } from "$lib/server/utils";
 import { error, fail, redirect } from "@sveltejs/kit";
-import { eq, max, param } from "drizzle-orm";
+import { count, eq, isNull, max, param } from "drizzle-orm";
 import { parse } from "svelte/compiler";
 
 
@@ -51,7 +51,9 @@ export async function load({ params, cookies }) {
 		}
 	}));
 
-	return { sessions: stripped_sessions }
+
+
+	return { sessions: stripped_sessions}
 }
 
 
@@ -83,6 +85,12 @@ export const actions = {
 				position: max_pos + 1,
 				question: 'Question #' + (max_pos + 1)
 			});
+
+		await db.update(quizzes)
+			.set({
+				updated_at: new Date()
+			}).where(eq(quizzes.uuid, quizz.uuid));
+
 
 		return redirect(302, '/dashboard/quizzes/edit/' + params.quizz_uuid + '/question/' + uuid);
 	},
@@ -140,25 +148,40 @@ export const actions = {
 			return fail(400);
 		}
 
-		/** @type {{public_since: string; public_until: string; answers_visible_since: string; duration: number}} */
+		/** @type {{public_since: string; public_until: string; answers_visible_since: string; duration: number; title: string}} */
 		let parsed = JSON.parse(stringified.toString());
 
 		try {
-			/** @type {{public_since: Date; public_until: Date; answers_visible_since: Date; duration: number}} */
+			/** @type {{public_since: Date; public_until: Date; answers_visible_since: Date; duration: number; title: string}} */
 			let info = {
+				title: parsed.title,
 				public_since: new Date(parsed.public_since),
 				public_until: new Date(parsed.public_until),
 				answers_visible_since: new Date(parsed.answers_visible_since),
 				duration: Number(parsed.duration)
 			}
 
+			if (!info.title) {
+				return fail(400, { title_too_short: true });
+			}
+
+			if (info.title.length > 100) {
+				return fail(400, { title_too_long: true });
+			}
+
+			if (info.duration < 2) {
+				return fail(400, { duration_too_short: true })
+			}
+
 			await db.update(quizzes)
 				.set(
 					{
+						title: info.title,
 						duration_minutes: info.duration,
 						public_since: info.public_since,
 						public_until: info.public_until,
 						answers_visible_since: info.answers_visible_since,
+						updated_at: new Date()
 					}
 				);
 

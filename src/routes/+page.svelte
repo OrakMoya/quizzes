@@ -35,12 +35,12 @@
 >
 	<div class="mx-auto flex h-full w-full max-w-screen-md">
 		<div class="flex h-4/5 w-full flex-col items-center justify-center">
-			<span class="mb-10 w-full text-4xl md:text-6xl font-bold">Quizzes</span>
+			<span class="mb-10 w-full text-4xl font-bold md:text-6xl">Quizzes</span>
 			<div class="w-full">
-				<div class="flex flex-col md:flex-row gap-x-2 gap-y-16 w-full items-start justify-between">
+				<div class="flex w-full flex-col items-start justify-between gap-x-2 gap-y-16 md:flex-row">
 					<div class="flex flex-col">
 						<form
-							class="mb-2 flex w-fit gap-x-3 rounded-md border border-accent bg-background"
+							class="group mb-2 flex w-fit gap-x-3 rounded-md border border-accent bg-background"
 							action="?/take"
 							method="post"
 							use:enhance
@@ -54,12 +54,15 @@
 								invalid:tracking-normal valid:enabled:font-bold valid:enabled:uppercase valid:enabled:tracking-[0.4em]
 								{error_state ? 'text-red-500' : ''}"
 								placeholder="Quizz code..."
+								min={5}
+								max={5}
 								bind:value={quizz_code}
+								oninput={() => (quizz_code = quizz_code.substring(0, 5))}
 								name="quizz_uuid"
 							></Input>
 							<button
-								disabled={!data.logged_in}
-								class="group flex items-center justify-center py-2 pl-2 pr-6 enabled:hover:text-blue-300 disabled:opacity-50"
+								disabled={!data.logged_in || quizz_code.length !== 5}
+								class="group flex items-center justify-center py-2 pl-2 pr-6 transition-all enabled:hover:text-blue-300 disabled:opacity-50"
 								type="submit"
 							>
 								{#if error_state}

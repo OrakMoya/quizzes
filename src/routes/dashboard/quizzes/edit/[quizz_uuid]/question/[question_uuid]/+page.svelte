@@ -160,8 +160,8 @@
 </AlertDialog.Root>
 
 <div class="mt-4">
-	<div class="flex items-center justify-between">
-		<p class="mb-4 text-2xl font-bold md:text-4xl">
+	<div class="flex items-center justify-between mb-4">
+		<p class="text-2xl font-bold md:text-4xl">
 			Question #{question.position}
 		</p>
 		<div class="flex gap-x-2">

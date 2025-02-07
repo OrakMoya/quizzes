@@ -27,14 +27,20 @@ export async function getCurrentUser(cookies, password = true) {
 			.limit(1);
 		let row = rows.at(0)
 
-
 		if (!row)
 			throw new Error("Token expired.");
 
 		// Refresh
 		let ts = Math.floor(Date.now() / 1000)
 		if ((ts - token_data.payload.iat) > 60) {
-			let token = jwt.sign({ uuid: row.uuid }, APP_SECRET, { expiresIn: '60m' });
+			let token = jwt.sign(
+				{
+					uuid: row.uuid,
+					exp: Math.floor(
+						Date.now() / 1000 + token_data.payload.exp - token_data.payload.iat)
+				},
+				APP_SECRET
+			);
 			cookies.set('token', token, { path: '/' });
 		}
 	}
@@ -57,10 +63,10 @@ export async function logout(cookies) {
 }
 
 /**
-* @param {{email: string, password: string}} params 
+* @param {{email: string, password: string, remember: boolean}} params 
 * @returns {Promise<string>}
 */
-export async function attemptLogin({ email, password }) {
+export async function attemptLogin({ email, password, remember }) {
 	let userResults = await db
 		.select()
 		.from(users)
@@ -79,6 +85,6 @@ export async function attemptLogin({ email, password }) {
 		throw new Error('Incorrect password for user with email ' + user.email);
 	}
 
-	let token = jwt.sign({ uuid: user.uuid }, APP_SECRET, { expiresIn: '60m' });
+	let token = jwt.sign({ uuid: user.uuid }, APP_SECRET, { expiresIn: remember ? '30d' : '60m' });
 	return token;
 }

@@ -1,8 +1,8 @@
 import { getCurrentUser } from "$lib/auth/auth";
 import { db } from "$lib/server/db";
-import { questions, quizzes } from "$lib/server/db/schema";
+import { question_parts, questions, quizzes } from "$lib/server/db/schema";
 import { error } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
+import { count, eq, isNull } from "drizzle-orm";
 
 /** @type {import("./$types").LayoutServerLoad} */
 export async function load({ cookies, params }) {
@@ -23,6 +23,11 @@ export async function load({ cookies, params }) {
 		.from(questions)
 		.where(eq(questions.quizz_uuid, params.quizz_uuid));
 
-	return { questions: questions_rows, quizz };
+	let empty_questions = (await db.select({count: count()})
+		.from(questions)
+		.leftJoin(question_parts, eq(questions.uuid, question_parts.question_uuid))
+		.where(isNull(question_parts.question_uuid))).at(0)?.count ?? 0;
+
+	return { questions: questions_rows, quizz, empty_questions };
 }
 

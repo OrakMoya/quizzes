@@ -56,6 +56,10 @@
 						<Command.Item
 							value={option.value}
 							onSelect={() => {
+								if(value==option.value) {
+									closeAndFocusTrigger();
+									return;
+								};
 								value = option.value;
 								onChange(value);
 								closeAndFocusTrigger();

@@ -1,6 +1,6 @@
 import { db } from "$lib/server/db";
 import { quizzes } from "$lib/server/db/schema";
-import { fail } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import { like } from "drizzle-orm";
 
 
@@ -8,7 +8,7 @@ import { like } from "drizzle-orm";
 export async function load({ params }) {
 	let quizz_uuid = params.quizz_uuid;
 	if (!quizz_uuid || quizz_uuid.length !== 5) {
-		return fail(404);
+		return error(404, {message: 'Quizz not found.'});
 	}
 
 	let quizz = (await db.select()
@@ -17,7 +17,7 @@ export async function load({ params }) {
 		.limit(1)).at(0);
 
 	if (!quizz) {
-		return fail(404);
+		return error(404, {message: 'Quizz not found.'});
 	}
 
 	return { quizz };

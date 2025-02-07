@@ -4,6 +4,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 
 	let {form} = $props();
 </script>
@@ -21,10 +22,13 @@
 					{#if form?.incorrect }
 						<span class="text-sm text-neutral-500">Incorrect email or password</span>
 					{/if}
+					<div class="flex gap-x-2 items-center mt-1">
+					<Checkbox name="remember_me" id="remember_me" /> <Label for="remember_me">Remember me</Label>
+					</div>
 
 					<div class="flex items-center text-sm gap-8 mt-4">
 						<a href="/register" class="text-neutral-500 hover:text-white transition-all ">Sign up instead</a>
-						<Button class="group-invalid:pointer-events-none group-invalid:opacity-50" type="submit">Log in!</Button>
+						<Button class="group-invalid:pointer-events-none group-invalid:opacity-50" type="submit">Log in</Button>
 					</div>
 				</form>
 			</div>

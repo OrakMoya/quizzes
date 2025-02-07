@@ -5,6 +5,7 @@ import { getQuestion, getSessionByUUID } from "$lib/server/utils";
 import { fromDate } from "@internationalized/date";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { and, asc, desc, eq, isNull, like, notInArray, param, sql } from "drizzle-orm";
+import * as internationalized from '@internationalized/date';
 
 
 
@@ -26,7 +27,7 @@ export async function load({ request, params, cookies }) {
 
 	let session = await getSessionByUUID(cookies.get('quizz_session') ?? "");
 	if (!session) {
-		return error(404);
+		return redirect(302, '/');
 	}
 
 	let answers_rows = db.select()
@@ -50,7 +51,12 @@ export async function load({ request, params, cookies }) {
 	}
 	);
 
-	return { question, parts, time_left: fromDate(session.created_at, 'UTC').add({ minutes: session.duration_minutes }).toDate().getTime() - Date.now() };
+	return {
+		question,
+		parts,
+		time_left: fromDate(session.created_at, 'UTC')
+			.add({ minutes: session.duration_minutes }).toDate().getTime() - Date.now()
+	};
 }
 
 /** @type {import("./$types").Actions} */
@@ -96,6 +102,22 @@ export let actions = {
 		}
 		/** @type {((typeof question_parts.$inferInsert) & {answer_data: any})[]} */
 		let submitted_parts = JSON.parse(partsJson.toString());
+
+		if (
+			internationalized
+				.fromDate(session.created_at, 'UTC')
+				.add({ minutes: session.duration_minutes })
+				.toDate()
+				.getTime()
+			>
+			new Date()
+				.getTime()
+		) {
+			await db.update(sessions)
+				.set({ in_progress: 0, updated_at: sql`(unixepoch())` })
+				.where(eq(sessions.uuid, session.uuid))
+
+		}
 
 		for (let i = 0; i < submitted_parts.length; i++) {
 			let part = submitted_parts[i];

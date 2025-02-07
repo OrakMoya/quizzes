@@ -13,6 +13,7 @@ export async function getResults(session_uuid) {
 		return null;
 	let total = 0;
 	let achieved = 0;
+
 	/** @type {{question: (typeof questions.$inferInsert), parts: {part: (typeof question_parts.$inferInsert), answers: any[]}[]}[]} */
 	let questions_in_quizz = [];
 	answers_rows.forEach((answer) => {
@@ -55,6 +56,7 @@ export async function getResults(session_uuid) {
 	});
 
 	return {
+		uuid: session_uuid,
 		questions: questions_in_quizz,
 		achieved: achieved >= 0 ? achieved : 0, // Svaka cast ono
 		total
@@ -107,7 +109,7 @@ export async function getQuizzByShortUUID(short_uuid) {
  * @param {string} message
  * @returns {never}
  */
-export function throwExpression(message){
+export function throwExpression(message) {
 	throw message;
 }
 
