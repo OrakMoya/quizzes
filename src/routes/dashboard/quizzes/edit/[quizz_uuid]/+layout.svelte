@@ -92,7 +92,8 @@
 		</p>
 	</div>
 	{#if data.empty_questions}
-		<div class="w-full px-4 py-2 rounded-md border border-red-900 bg-red-950">The quizz has empty questions. <a class="underline" data-sveltekit-preload-data="off" data-sveltekit-reload href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/cleanup">Clean up</a></div>
+		<div class="w-full px-4 py-2 rounded-md border border-red-900 bg-red-950">The quizz has empty questions. <a class="underline" data-sveltekit-preload-data="off" rel="external" href="/dashboard/quizzes/edit/{page.params.quizz_uuid}/cleanup">Clean up</a></div>
+
 	{/if}
 
 	{@render children()}
